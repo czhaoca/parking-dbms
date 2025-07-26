@@ -1,6 +1,10 @@
 # Parking Management System
 
-A comprehensive PHP-based parking management system designed for corporate environments, featuring employee parking allocation, EV charging station booking, and waitlist management.
+A database course project demonstrating parking management for corporate environments. Originally built with PHP/Oracle, now migrated to Python/SQLite due to infrastructure changes.
+
+## Project Evolution
+
+This project was developed for a UBC database course in 2022. When the course ended, access to PHP and Oracle Database services was terminated. The project has been migrated to Python with SQLite to preserve functionality and serve as a portfolio piece.
 
 ## Features
 
@@ -13,10 +17,15 @@ A comprehensive PHP-based parking management system designed for corporate envir
 
 ## Technology Stack
 
-- **Backend**: PHP 7.4+ with OCI8 extension
-- **Database**: Oracle Database (Compatible with OCI Free Tier Autonomous Database)
-- **Frontend**: HTML, CSS, JavaScript
-- **Server**: Apache/Nginx with PHP support
+### Original Implementation (Archived)
+- **Backend**: PHP 7.4 with OCI8 extension
+- **Database**: Oracle Database
+- **Server**: UBC Apache server
+
+### Current Implementation
+- **Backend**: Python 3.12 with Flask
+- **Database**: SQLite3
+- **Deployment**: CGI scripts or standalone Flask server
 
 ## Database Schema
 
@@ -34,36 +43,28 @@ The system uses 7 main tables:
 
 ### Prerequisites
 
-1. PHP 7.4 or higher with OCI8 extension
-2. Oracle Instant Client
-3. Web server (Apache/Nginx)
-4. Oracle Cloud account (for Free Tier Autonomous Database)
+1. Python 3.x (for current implementation)
+2. SQLite3 (usually pre-installed)
+3. Web server with CGI support (Apache)
+4. Original implementation required PHP 7.4 + Oracle (no longer available)
 
-### Database Setup
+### Quick Start
 
-1. **Create Oracle Autonomous Database**
-   - Sign up for [Oracle Cloud Free Tier](https://www.oracle.com/cloud/free/)
-   - Create an Autonomous Database (Always Free: 1 OCPU, 20GB storage)
-   - Choose **19c** version with **Transaction Processing** workload
-   - Download the wallet file from OCI Console
-
-2. **Configure Database Connection**
-   - Extract wallet to secure directory (e.g., `/opt/oracle/wallet`)
-   - Set `TNS_ADMIN` environment variable to wallet path:
-     ```bash
-     export TNS_ADMIN=/opt/oracle/wallet
-     ```
-   - Copy `.env.example` to `.env` and update with your credentials:
-     ```bash
-     cp .env.example .env
-     # Edit .env with your database credentials
-     ```
-
-3. **Run Migration Script**
+1. **Clone Repository**
    ```bash
-   # Connect as ADMIN to create application user
-   sqlplus admin/your_admin_password@your_tns_name @src/migrate_to_oci.sql
+   git clone https://github.com/czhaoca/parking-dbms.git
+   cd parking-dbms
    ```
+
+2. **Run Setup Script**
+   ```bash
+   chmod +x setup-python.sh
+   ./setup-python.sh
+   ```
+
+3. **Access Application**
+   - Documentation: `https://your-domain/parking-dbms/`
+   - CGI Application: `https://your-domain/parking-dbms/cgi-bin/index.py`
 
 ### Application Setup
 
@@ -268,33 +269,33 @@ parking-dbms/
 
 ## Changelog
 
-### [2.0.0] - 2025-07-26
-#### Added
-- Oracle Cloud Infrastructure (OCI) Free Tier support
-- Autonomous Database migration script
-- Enhanced database configuration with connection pooling
-- Database views for common queries
-- Comprehensive README documentation
-- Environment variable support for credentials
-- .gitignore for security and cleanliness
-
+### [3.0.0] - 2025-07-26 (Python Migration)
 #### Changed
-- Migrated from UBC Solaris Oracle to OCI Autonomous Database
-- Updated database schema with proper constraints and indexes
-- Improved error handling and logging
-- Modernized PHP database connection methods
+- Complete migration from PHP/Oracle to Python/SQLite
+- Reimplemented as CGI scripts for compatibility
+- Updated deployment process for servers without PHP
 
-#### Removed
-- Legacy UBC database connection strings
-- Deprecated grant statements for public access
+#### Added
+- SQLite database implementation
+- Python Flask alternative
+- Automated setup script with port checking
 
-### [1.0.0] - Initial Release
-- Basic parking management functionality
-- Employee and department management
-- Parking allocation system
-- EV charging booking
-- Waitlist management
-- Admin reporting tools
+#### Context
+- PHP and Oracle services terminated after course completion
+- Migration necessary to maintain project as portfolio piece
+
+### [2.0.0] - 2022 (Course Project)
+#### Original Implementation
+- PHP 7.4 with OCI8 extension
+- Oracle Database with PL/SQL
+- Full CRUD operations
+- Authentication system
+- Reporting features
+
+### [1.0.0] - 2022 (Initial Development)
+- Database schema design
+- Core functionality implementation
+- Basic UI development
 
 ## License
 
