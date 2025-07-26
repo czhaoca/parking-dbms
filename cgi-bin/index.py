@@ -4,21 +4,49 @@ Parking Management System - CGI Version
 Simple CGI script that can run on Apache without mod_wsgi
 """
 
-import cgi
-import cgitb
-import sqlite3
-import os
 import sys
+import os
 
-# Enable CGI error reporting
-cgitb.enable()
+# Enable CGI error reporting with more details
+import cgitb
+cgitb.enable(display=1, logdir="/tmp")
 
-# Print HTTP header
-print("Content-Type: text/html; charset=utf-8")
-print()
+try:
+    import cgi
+    import sqlite3
+    
+    # Print HTTP header FIRST - this is critical
+    print("Content-Type: text/html; charset=utf-8")
+    print()
+    
+except Exception as e:
+    # If imports fail, still try to output valid HTTP
+    print("Content-Type: text/html")
+    print()
+    print(f"<h1>Import Error</h1><pre>{str(e)}</pre>")
+    sys.exit(1)
 
-# Database path
-DB_PATH = os.path.join(os.path.dirname(__file__), '..', 'parking.db')
+# Database path - try multiple locations
+DB_PATH = None
+possible_paths = [
+    os.path.join(os.path.dirname(__file__), 'parking.db'),
+    os.path.join(os.path.dirname(__file__), '..', 'parking.db'),
+    os.path.join(os.path.dirname(__file__), '..', 'python_app', 'parking.db'),
+    'parking.db'
+]
+
+for path in possible_paths:
+    if os.path.exists(path):
+        DB_PATH = path
+        break
+
+if not DB_PATH:
+    print("<h1>Error: Database not found</h1>")
+    print("<p>Searched in:</p><ul>")
+    for path in possible_paths:
+        print(f"<li>{path}</li>")
+    print("</ul>")
+    sys.exit(1)
 
 def get_employees():
     """Get all employees from database"""
