@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Management System - PHP Configuration Required</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 2rem;
+            background-color: #f5f5f5;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #e74c3c;
+            border-bottom: 3px solid #e74c3c;
+            padding-bottom: 1rem;
+        }
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffeeba;
+            color: #856404;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+        .steps {
+            background: #e8f4f8;
+            border: 1px solid #b8daff;
+            padding: 1rem;
+            border-radius: 5px;
+            margin: 1rem 0;
+        }
+        code {
+            background: #f8f9fa;
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        pre {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            overflow-x: auto;
+            border: 1px solid #dee2e6;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .test-links {
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>⚠️ PHP Not Configured</h1>
+        
+        <div class="warning">
+            <strong>Issue:</strong> PHP is not being executed on this server. You're seeing raw PHP code instead of the application.
+        </div>
+
+        <h2>Quick Diagnosis</h2>
+        <div class="test-links">
+            <p>Click these links to test PHP execution:</p>
+            <ul>
+                <li><a href="test.php">Minimal PHP Test</a> - Should show "PHP works"</li>
+                <li><a href="phpinfo.php">PHP Info Test</a> - Should show PHP configuration</li>
+                <li><a href="test-no-htaccess.php">Test without .htaccess</a> - Debugging guide</li>
+            </ul>
+            <p>If you see PHP code instead of the expected output, PHP is not enabled.</p>
+        </div>
+
+        <h2>Solution for UBC Students</h2>
+        <div class="steps">
+            <h3>Option 1: Contact Support</h3>
+            <p>Email your system administrator and request:</p>
+            <pre>Subject: Enable PHP for my account
+
+Hello,
+
+I need PHP enabled for my public_html directory to run a database project.
+My username is: [your_username]
+Project location: ~/public_html/parking-dbms/
+
+The project requires:
+- PHP 7.4 or higher
+- OCI8 extension for Oracle database connectivity
+
+Thank you!</pre>
+
+            <h3>Option 2: Try Different Directory</h3>
+            <p>Some servers have PHP enabled only in specific directories:</p>
+            <ul>
+                <li>Try <code>~/public_html/cgi-bin/</code></li>
+                <li>Try <code>~/www/</code></li>
+                <li>Check if there's a <code>~/php-enabled/</code> directory</li>
+            </ul>
+
+            <h3>Option 3: Command Line Testing</h3>
+            <p>SSH into the server and test PHP:</p>
+            <pre>$ php -v
+$ php test.php
+$ which php</pre>
+        </div>
+
+        <h2>Temporary Workaround</h2>
+        <p>While waiting for PHP to be enabled, you can:</p>
+        <ol>
+            <li>View the project documentation: <a href="README.md">README.md</a></li>
+            <li>Browse the source code: <a href="https://github.com/czhaoca/parking-dbms">GitHub Repository</a></li>
+            <li>Set up a local development environment with XAMPP/WAMP</li>
+        </ol>
+
+        <h2>For System Administrators</h2>
+        <div class="steps">
+            <p>To enable PHP for this user:</p>
+            <pre># For Apache with mod_php
+a2enmod php7.4
+systemctl restart apache2
+
+# Add to user's .htaccess or Apache config:
+&lt;Directory /home/username/public_html&gt;
+    Options +ExecCGI
+    AddHandler application/x-httpd-php .php
+&lt;/Directory&gt;</pre>
+        </div>
+
+        <footer style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #dee2e6; color: #6c757d;">
+            <p>Parking Management System - Version 2.0</p>
+        </footer>
+    </div>
+</body>
+</html>
