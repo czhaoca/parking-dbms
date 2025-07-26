@@ -69,23 +69,49 @@ The system uses 7 main tables:
 
 1. **Clone Repository**
    ```bash
-   git clone https://github.com/yourusername/parking-dbms.git
+   git clone https://github.com/czhaoca/parking-dbms.git
    cd parking-dbms
    ```
 
-2. **Configure Web Server**
+2. **Configure Apache Web Server**
+   
+   For UBC hosting (Apache/2.4.58 Ubuntu):
+   ```bash
+   # Copy files to your public_html directory
+   cp -r * ~/public_html/parking-dbms/
+   
+   # Set proper permissions
+   chmod 755 ~/public_html/parking-dbms
+   chmod 644 ~/public_html/parking-dbms/*.php
+   chmod 755 ~/public_html/parking-dbms/utils
+   chmod 600 ~/public_html/parking-dbms/.env
+   ```
+   
+   For other Apache servers:
    - Point document root to project directory
    - Ensure PHP OCI8 extension is enabled
-   - Set appropriate file permissions
+   - Enable mod_rewrite and mod_headers modules
+   - The included `.htaccess` file handles security and configuration
 
 3. **Update Configuration**
-   - Environment variables are loaded from `.env` file
+   - Copy `.env.example` to `.env`
+   - Update database credentials in `.env`
    - Ensure `.env` has proper permissions (chmod 600)
-   - Configure timezone in PHP if needed
+   - Set `TNS_ADMIN` environment variable to wallet directory
 
-4. **Access Application**
-   - Navigate to `http://your-domain/index.php`
-   - Default admin login: Check `loginInfo` table
+4. **Verify Installation**
+   ```bash
+   # Check PHP extensions
+   php -m | grep oci8
+   
+   # Test database connection
+   php src/config/db_config_oci.php
+   ```
+
+5. **Access Application**
+   - Navigate to `https://your-domain/parking-dbms/`
+   - The `.htaccess` file ensures proper routing
+   - Default admin users: sharon, jimmy, tom, jess (check loginInfo table)
 
 ## Usage
 
@@ -145,6 +171,14 @@ parking-dbms/
 - Input validation and parameterized queries
 - Session management and timeout policies
 
+## Apache Hosting Requirements
+
+- Apache 2.4+ with mod_php
+- PHP 7.4+ with OCI8 extension
+- mod_rewrite enabled
+- mod_headers enabled (optional, for security headers)
+- AllowOverride All for .htaccess to work
+
 ## Troubleshooting
 
 ### Common Issues
@@ -152,16 +186,31 @@ parking-dbms/
 1. **OCI8 Extension Not Found**
    - Install Oracle Instant Client
    - Enable OCI8 in php.ini
-   - Restart web server
+   - Restart Apache: `sudo systemctl restart apache2`
 
 2. **Database Connection Failed**
-   - Verify TNS_ADMIN path
+   - Verify TNS_ADMIN environment variable
    - Check wallet file permissions
-   - Validate credentials in config file
+   - Validate credentials in .env file
+   - Ensure wallet directory is readable by Apache user
 
 3. **Permission Errors**
-   - Set proper file/directory permissions
-   - Ensure web server user can read files
+   ```bash
+   # Fix permissions
+   find . -type d -exec chmod 755 {} \;
+   find . -type f -exec chmod 644 {} \;
+   chmod 600 .env
+   ```
+
+4. **Apache 403 Forbidden**
+   - Check .htaccess is being processed
+   - Ensure AllowOverride is set to All
+   - Verify directory permissions
+
+5. **PHP Files Download Instead of Execute**
+   - Ensure mod_php is enabled
+   - Check Apache PHP configuration
+   - Verify .htaccess SetHandler directive
 
 ## Contributing
 
