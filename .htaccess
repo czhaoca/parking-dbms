@@ -1,9 +1,4 @@
-# Apache configuration for Parking Management System
-
-# Enable PHP engine
-<FilesMatch "\.php$">
-    SetHandler application/x-httpd-php
-</FilesMatch>
+# Basic Apache configuration for Parking Management System
 
 # Set default index file
 DirectoryIndex index.php index.html
@@ -11,71 +6,24 @@ DirectoryIndex index.php index.html
 # Disable directory listing
 Options -Indexes
 
-# Enable URL rewriting (if needed in future)
+# Protect sensitive files
+<FilesMatch "\.(env|git|gitignore)$">
+    Order allow,deny
+    Deny from all
+</FilesMatch>
+
+# Ensure PHP files are executed
+<FilesMatch "\.php$">
+    SetHandler application/x-httpd-php
+</FilesMatch>
+
+# Basic security
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /
     
-    # Redirect to HTTPS if available
-    # RewriteCond %{HTTPS} off
-    # RewriteRule ^(.*)$ https://%{HTTP_HOST}/$1 [R=301,L]
+    # Prevent access to hidden files
+    RewriteRule ^\.(.*)$ - [F,L]
     
-    # Prevent access to .env files
-    RewriteRule ^\.env - [F,L]
-    
-    # Prevent access to git files
-    RewriteRule ^\.git - [F,L]
-    
-    # Prevent access to config files
+    # Prevent access to src/config directory
     RewriteRule ^src/config/ - [F,L]
 </IfModule>
-
-# Security headers
-<IfModule mod_headers.c>
-    Header set X-Content-Type-Options "nosniff"
-    Header set X-Frame-Options "SAMEORIGIN"
-    Header set X-XSS-Protection "1; mode=block"
-</IfModule>
-
-# PHP settings (if allowed by hosting)
-<IfModule mod_php7.c>
-    php_value upload_max_filesize 10M
-    php_value post_max_size 10M
-    php_value max_execution_time 300
-    php_value max_input_time 300
-    php_value memory_limit 128M
-    
-    # Error reporting for development (disable in production)
-    php_flag display_errors on
-    php_value error_reporting E_ALL
-</IfModule>
-
-# Deny access to sensitive files
-<FilesMatch "^\.">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-# Protect specific files
-<FilesMatch "(\.env|\.gitignore|composer\.(json|lock)|package\.(json|lock)|README\.md|CLAUDE\.md)$">
-    Order allow,deny
-    Deny from all
-</FilesMatch>
-
-# Cache control for static assets
-<IfModule mod_expires.c>
-    ExpiresActive On
-    ExpiresByType image/jpg "access plus 1 month"
-    ExpiresByType image/jpeg "access plus 1 month"
-    ExpiresByType image/gif "access plus 1 month"
-    ExpiresByType image/png "access plus 1 month"
-    ExpiresByType text/css "access plus 1 week"
-    ExpiresByType application/javascript "access plus 1 week"
-</IfModule>
-
-# Character encoding
-AddDefaultCharset UTF-8
-
-# MIME types
-AddType application/x-httpd-php .php
-AddType text/html .html .htm

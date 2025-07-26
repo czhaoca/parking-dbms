@@ -77,13 +77,21 @@ The system uses 7 main tables:
    
    For UBC hosting (Apache/2.4.58 Ubuntu):
    ```bash
+   # First, ensure your home directory allows Apache access
+   chmod 711 ~
+   chmod 755 ~/public_html
+   
    # Copy files to your public_html directory
    cp -r * ~/public_html/parking-dbms/
    
-   # Set proper permissions
-   chmod 755 ~/public_html/parking-dbms
-   chmod 644 ~/public_html/parking-dbms/*.php
-   chmod 755 ~/public_html/parking-dbms/utils
+   # Run the permission fix script
+   cd ~/public_html/parking-dbms/
+   chmod 755 fix-permissions.sh
+   ./fix-permissions.sh
+   
+   # Or manually set permissions:
+   find ~/public_html/parking-dbms -type d -exec chmod 755 {} \;
+   find ~/public_html/parking-dbms -type f -exec chmod 644 {} \;
    chmod 600 ~/public_html/parking-dbms/.env
    ```
    
@@ -202,15 +210,23 @@ parking-dbms/
    chmod 600 .env
    ```
 
-4. **Apache 403 Forbidden**
-   - Check .htaccess is being processed
-   - Ensure AllowOverride is set to All
-   - Verify directory permissions
+4. **Apache 403 Forbidden / "Server unable to read htaccess file"**
+   ```bash
+   # This is the most common issue - fix with:
+   chmod 711 ~                              # Home directory
+   chmod 755 ~/public_html                  # Public HTML directory
+   chmod 755 ~/public_html/parking-dbms     # Project directory
+   chmod 644 ~/public_html/parking-dbms/.htaccess  # Make .htaccess readable
+   
+   # Run the fix script:
+   cd ~/public_html/parking-dbms && ./fix-permissions.sh
+   ```
 
 5. **PHP Files Download Instead of Execute**
    - Ensure mod_php is enabled
-   - Check Apache PHP configuration
-   - Verify .htaccess SetHandler directive
+   - Check if .htaccess is being processed
+   - Try removing .htaccess temporarily to test
+   - Contact system admin if PHP isn't configured
 
 ## Contributing
 
