@@ -222,11 +222,41 @@ parking-dbms/
    cd ~/public_html/parking-dbms && ./fix-permissions.sh
    ```
 
-5. **PHP Files Download Instead of Execute**
-   - Ensure mod_php is enabled
-   - Check if .htaccess is being processed
-   - Try removing .htaccess temporarily to test
-   - Contact system admin if PHP isn't configured
+5. **PHP Files Download Instead of Execute (Shows Raw Code)**
+   
+   This is a critical issue. Try these solutions in order:
+   
+   a) **Test if PHP works at all:**
+   ```bash
+   # Access the test file
+   https://your-domain/parking-dbms/phpinfo.php
+   ```
+   
+   b) **Temporarily disable .htaccess:**
+   ```bash
+   cd ~/public_html/parking-dbms
+   mv .htaccess .htaccess.bak
+   # Try accessing index.php again
+   ```
+   
+   c) **If PHP works without .htaccess, try different handlers in .htaccess:**
+   - Edit .htaccess and try uncommenting different PHP handler options
+   - Option 1: SetHandler application/x-httpd-php
+   - Option 2: AddHandler application/x-httpd-php .php
+   - Option 3: AddType application/x-httpd-php .php
+   
+   d) **Check Apache PHP module:**
+   ```bash
+   # Check if PHP module is loaded (if you have access)
+   apache2ctl -M | grep php
+   # or
+   httpd -M | grep php
+   ```
+   
+   e) **Last resort - No .htaccess approach:**
+   - Remove/rename .htaccess file
+   - PHP should work with Apache's default configuration
+   - Contact system administrator to enable PHP for your account
 
 ## Contributing
 
