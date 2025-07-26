@@ -22,6 +22,9 @@ wallet/
 *~
 .DS_Store
 
+# Claude local settings
+.claude/settings.local.json
+
 # PHP files
 vendor/
 composer.lock
