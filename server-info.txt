@@ -1,0 +1,156 @@
+=== Server Information Collection ===
+Date: Sat Jul 26 03:03:01 PM PDT 2025
+User: czha
+
+=== System Information ===
+Linux gambier.students.cs.ubc.ca 6.11.0-29-generic #29~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Jun 26 14:16:59 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+
+=== OS Version ===
+PRETTY_NAME="Ubuntu 24.04.2 LTS"
+NAME="Ubuntu"
+VERSION_ID="24.04"
+VERSION="24.04.2 LTS (Noble Numbat)"
+VERSION_CODENAME=noble
+ID=ubuntu
+ID_LIKE=debian
+HOME_URL="https://www.ubuntu.com/"
+SUPPORT_URL="https://help.ubuntu.com/"
+BUG_REPORT_URL="https://bugs.launchpad.net/ubuntu/"
+PRIVACY_POLICY_URL="https://www.ubuntu.com/legal/terms-and-policies/privacy-policy"
+UBUNTU_CODENAME=noble
+LOGO=ubuntu-logo
+
+=== Check for PHP ===
+which php:
+php version:
+./server-info.sh: line 28: php: command not found
+
+=== Check for other PHP versions ===
+Checking php7.0:
+Checking php7.1:
+Checking php7.2:
+Checking php7.3:
+Checking php7.4:
+Checking php8.0:
+Checking php8.1:
+Checking php8.2:
+Checking php8.3:
+
+=== Check for Python ===
+which python3:
+/bin/python3
+python3 version:
+Python 3.12.3
+
+=== Check for Node.js ===
+which node:
+/bin/node
+node version:
+v18.19.1
+
+=== Check for Ruby ===
+which ruby:
+/bin/ruby
+ruby version:
+ruby 3.2.3 (2024-01-18 revision 52bb2ac0a6) [x86_64-linux-gnu]
+
+=== Check for Perl ===
+which perl:
+/bin/perl
+perl version:
+
+This is perl 5, version 38, subversion 2 (v5.38.2) built for x86_64-linux-gnu-thread-multi
+
+=== Apache Information ===
+Apache version:
+Server version: Apache/2.4.58 (Ubuntu)
+Server built:   2025-07-14T16:22:22
+Apache modules (if accessible):
+./server-info.sh: line 70: apache2ctl: command not found
+
+=== Installed Packages (if dpkg available) ===
+Total packages: 2649
+Web-related packages:
+ii  apache2-bin                             2.4.58-1ubuntu8.7                        amd64        Apache HTTP Server (modules and other binary files)
+ii  cheese                                  44.1-1build4                             amd64        tool to take pictures and videos from your webcam
+ii  cups                                    2.4.7-1.2ubuntu7.3                       amd64        Common UNIX Printing System(tm) - PPD/driver support, web interface
+ii  dh-python                               6.20240401                               all          Debian helper tools for packaging Python libraries and applications
+ii  firefox                                 140.0+build1-0ubuntu0.24.04.1~mt1        amd64        Safe and easy web browser from Mozilla
+ii  gir1.2-webkit-6.0:amd64                 2.48.3-0ubuntu0.24.04.1                  amd64        Web content engine library for GTK - GObject introspection data
+ii  gir1.2-webkit2-4.1:amd64                2.48.3-0ubuntu0.24.04.1                  amd64        Web content engine library for GTK - GObject introspection data
+ii  gnome-browser-connector                 42.1-4                                   all          GNOME Shell extensions integration for web browsers
+ii  libalgorithm-c3-perl                    0.11-2                                   all          Perl module for merging hierarchies using the C3 algorithm
+ii  libalgorithm-diff-perl                  1.201-1                                  all          module to find differences between files
+ii  libalgorithm-diff-xs-perl:amd64         0.04-8build3                             amd64        module to find differences between files (XS accelerated)
+ii  libalgorithm-merge-perl                 0.08-5                                   all          Perl module for three-way merge of textual data
+ii  libapache-pom-java                      29-2                                     all          Maven metadata for all Apache Software projects
+ii  libapache2-mod-dnssd                    0.6-4build3                              amd64        Zeroconf support for Apache 2 via avahi
+ii  libauthen-sasl-perl                     2.1700-1                                 all          Authen::SASL - SASL Authentication framework
+ii  libb-hooks-endofscope-perl              0.28-1                                   all          module for executing code after a scope finished compilation
+ii  libb-hooks-op-check-perl:amd64          0.22-3build1                             amd64        Perl wrapper for OP check callbacks
+ii  libbit-vector-perl:amd64                7.4-3build1                              amd64        Perl module for bit vectors and more
+ii  libcairo-gobject-perl                   1.005-4build3                            amd64        integrate Cairo into the Glib type system in Perl
+ii  libcairo-perl                           1.109-4build1                            amd64        Perl interface to the Cairo graphics library
+ii  libcarp-clan-perl                       6.08-2                                   all          Perl enhancement to Carp error logging facilities
+ii  libcheese-gtk25:amd64                   44.1-1build4                             amd64        tool to take pictures and videos from your webcam - widgets
+ii  libcheese8:amd64                        44.1-1build4                             amd64        tool to take pictures and videos from your webcam - base library
+ii  libclass-c3-perl                        0.35-2                                   all          pragma for using the C3 method resolution order
+ii  libclass-c3-xs-perl                     0.15-1build6                             amd64        Perl module to accelerate Class::C3
+ii  libclass-data-inheritable-perl          0.08-3                                   all          Perl module to create accessors to class data
+ii  libclass-method-modifiers-perl          2.15-1                                   all          Perl module providing method modifiers
+ii  libclass-xsaccessor-perl                1.19-4build4                             amd64        Perl module providing fast XS accessors
+ii  libclone-perl:amd64                     0.46-1build3                             amd64        module for recursively copying Perl datatypes
+ii  libcommon-sense-perl:amd64              3.75-3build3                             amd64        module that implements some sane defaults for Perl programs
+ii  libcrypt-rc4-perl                       2.02-5                                   all          Perl implementation of the RC4 encryption algorithm
+ii  libdata-dump-perl                       1.25-1                                   all          Perl module to help dump data structures
+ii  libdata-optlist-perl                    0.114-1                                  all          module to parse and validate simple name/value option pairs
+ii  libdate-calc-perl                       6.4-2                                    all          Perl library for accessing dates
+ii  libdate-calc-xs-perl:amd64              6.4-2build4                              amd64        Perl library for accessing dates
+ii  libdate-manip-perl                      6.95-1                                   all          module for manipulating dates
+ii  libdevel-callchecker-perl:amd64         0.008-2build3                            amd64        custom op checking attached to subroutines
+ii  libdevel-caller-perl:amd64              2.07-1build3                             amd64        module providing enhanced caller() support
+ii  libdevel-globaldestruction-perl         0.14-4                                   all          module to expose the flag that marks global destruction
+ii  libdevel-lexalias-perl                  0.05-3build4                             amd64        Perl module that provides alias lexical variables
+ii  libdevel-stacktrace-perl                2.0500-1                                 all          Perl module containing stack trace and related objects
+ii  libdigest-perl-md5-perl                 1.9-5                                    all          Perl Implementation of Rivest's MD5 algorithm
+ii  libdist-checkconflicts-perl             0.11-2                                   all          module for declaring version conflicts for a distribution
+ii  libdpkg-perl                            1.22.6ubuntu6.1                          all          Dpkg perl modules
+ii  libdynaloader-functions-perl            0.003-3                                  all          deconstructed dynamic C library loading
+ii  libemail-date-format-perl               1.008-1                                  all          Module to generate RFC-2822-valid date strings
+ii  libencode-locale-perl                   1.05-3                                   all          utility to determine the locale encoding
+ii  liberror-perl                           0.17029-2                                all          Perl module for error/exception handling in an OO-ish way
+ii  libeval-closure-perl                    0.14-3                                   all          Perl module to safely and cleanly create closures via string eval
+ii  libexception-class-perl                 1.45-1                                   all          module that allows you to declare real exception classes in Perl
+
+=== Available commands in PATH ===
+Looking for web development tools...
+✓ gcc is available: /bin/gcc
+✓ g++ is available: /bin/g++
+✓ make is available: /bin/make
+✓ git is available: /bin/git
+✓ svn is available: /bin/svn
+✓ sqlite3 is available: /bin/sqlite3
+
+=== User Environment ===
+Home directory: /home/c/czha
+Current directory: /home/c/czha/public_html/parking-dbms
+Shell: /bin/bash
+
+=== Web Directory Permissions ===
+total 192
+drwxr-xr-x  3 czha undergrad  85 Jul 26 14:31 .
+drwx--x--x 18 czha undergrad 918 Jul 26 14:55 ..
+-rwxr-xr-x  1 czha undergrad 655 Jul 26 14:31 index.html
+drwxr-xr-x  5 czha undergrad 706 Jul 26 15:03 parking-dbms
+-rw-r--r--  1 czha undergrad  25 Apr  7  2022 robot.txt
+
+=== CGI-BIN Check ===
+No CGI-BIN directory found
+
+=== Check for alternative scripting support ===
+Checking .htaccess in public_html:
+No .htaccess in public_html root
+
+=== Summary ===
+Script completed. Results saved to: server-info.txt
+Please add this file to git and commit it.
