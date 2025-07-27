@@ -3,504 +3,444 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Parking Management System - Database Course Project</title>
+    <title>Parking Database Management System</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            line-height: 1.6;
-            color: #333;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
         }
-        
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem;
-        }
-        
-        header {
-            text-align: center;
-            color: white;
-            padding: 3rem 0;
-        }
-        
-        header h1 {
-            font-size: 3rem;
-            font-weight: 300;
-            margin-bottom: 1rem;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-        }
-        
-        header p {
-            font-size: 1.2rem;
-            opacity: 0.9;
-        }
-        
-        .main-content {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-            padding: 3rem;
-            margin-bottom: 2rem;
-        }
-        
-        .section {
-            margin-bottom: 3rem;
-        }
-        
-        .section h2 {
-            color: #2c3e50;
-            font-size: 2rem;
-            margin-bottom: 1rem;
-            border-bottom: 3px solid #3498db;
-            padding-bottom: 0.5rem;
-        }
-        
-        .tech-stack {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .tech-item {
-            background: #f8f9fa;
-            padding: 1rem;
-            border-radius: 8px;
-            text-align: center;
-            transition: transform 0.3s;
-        }
-        
-        .tech-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-        }
-        
-        .tech-item h3 {
-            color: #3498db;
-            margin-bottom: 0.5rem;
-        }
-        
-        .features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-top: 2rem;
-        }
-        
-        .feature-card {
-            background: #ecf0f1;
-            padding: 2rem;
+            background-color: white;
+            padding: 20px;
             border-radius: 10px;
-            border-left: 5px solid #3498db;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
-        
-        .feature-card h3 {
-            color: #2c3e50;
-            margin-bottom: 1rem;
+        h1 {
+            color: #333;
+            text-align: center;
         }
-        
-        .feature-card ul {
-            list-style: none;
-            padding-left: 0;
-        }
-        
-        .feature-card li {
-            padding: 0.5rem 0;
-            position: relative;
-            padding-left: 1.5rem;
-        }
-        
-        .feature-card li:before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: #27ae60;
-            font-weight: bold;
-        }
-        
-        .code-structure {
-            background: #2c3e50;
-            color: #ecf0f1;
-            padding: 2rem;
-            border-radius: 10px;
-            margin-top: 2rem;
-            overflow-x: auto;
-        }
-        
-        .code-structure pre {
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-        }
-        
-        .links {
+        .nav-menu {
             display: flex;
-            gap: 1rem;
+            justify-content: center;
             flex-wrap: wrap;
-            margin-top: 2rem;
+            gap: 10px;
+            margin: 20px 0;
         }
-        
-        .btn {
-            display: inline-block;
-            padding: 1rem 2rem;
-            background: #3498db;
+        .nav-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
             color: white;
-            text-decoration: none;
+            border: none;
             border-radius: 5px;
-            transition: background 0.3s;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
         }
-        
-        .btn:hover {
-            background: #2980b9;
+        .nav-button:hover {
+            background-color: #45a049;
         }
-        
-        .btn-secondary {
-            background: #95a5a6;
+        .nav-button.active {
+            background-color: #2196F3;
         }
-        
-        .btn-secondary:hover {
-            background: #7f8c8d;
-        }
-        
-        .btn-github {
-            background: #2c3e50;
-        }
-        
-        .btn-github:hover {
-            background: #1a252f;
-        }
-        
-        .timeline {
-            margin-top: 2rem;
-        }
-        
-        .timeline-item {
-            display: flex;
-            margin-bottom: 2rem;
-            position: relative;
-        }
-        
-        .timeline-item:before {
-            content: "";
-            position: absolute;
-            left: 2rem;
-            top: 3rem;
-            bottom: -2rem;
-            width: 2px;
-            background: #e0e0e0;
-        }
-        
-        .timeline-item:last-child:before {
+        .content-section {
             display: none;
+            margin-top: 20px;
         }
-        
-        .timeline-date {
-            width: 4rem;
-            flex-shrink: 0;
-            text-align: center;
+        .content-section.active {
+            display: block;
         }
-        
-        .timeline-date span {
+        .sql-output {
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
             display: inline-block;
-            background: #3498db;
-            color: white;
-            padding: 0.5rem;
-            border-radius: 50%;
+            width: 150px;
             font-weight: bold;
         }
-        
-        .timeline-content {
-            flex: 1;
-            background: #f8f9fa;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-left: 2rem;
+        input, select {
+            padding: 5px;
+            width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
         }
-        
-        .timeline-content h4 {
-            color: #2c3e50;
-            margin-bottom: 0.5rem;
-        }
-        
-        .migration-notice {
-            background: #fff3cd;
-            border: 1px solid #ffeeba;
-            color: #856404;
-            padding: 1.5rem;
-            border-radius: 8px;
-            margin-bottom: 2rem;
-        }
-        
-        .migration-notice h3 {
-            margin-bottom: 0.5rem;
-        }
-        
-        footer {
-            text-align: center;
+        .generate-btn {
+            background-color: #2196F3;
             color: white;
-            padding: 2rem 0;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 10px;
         }
-        
-        @media (max-width: 768px) {
-            header h1 {
-                font-size: 2rem;
-            }
-            
-            .main-content {
-                padding: 1.5rem;
-            }
-            
-            .features {
-                grid-template-columns: 1fr;
-            }
+        .generate-btn:hover {
+            background-color: #1976D2;
+        }
+        .copy-btn {
+            background-color: #ff9800;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+        .copy-btn:hover {
+            background-color: #e68900;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>Parking Management System</h1>
-            <p>Database Course Project - UBC Computer Science</p>
-            <p>A comprehensive solution for corporate parking management</p>
-        </header>
+        <h1>Parking Database Management System</h1>
+        <p style="text-align: center; color: #666;">SQL Command Generator for Oracle Database</p>
         
-        <div class="main-content">
-            <div class="migration-notice">
-                <h3>📍 Project Migration Notice</h3>
-                <p><strong>Course Completion Impact:</strong> Upon completion of the database course in 2022, access to PHP runtime and Oracle Database services was terminated by the university. This required a complete migration to maintain the project as a portfolio piece.</p>
-                <p><strong>Current Status:</strong> Migrated to Python with SQLite database. Original PHP/Oracle implementation preserved in archives for reference.</p>
-            </div>
-            
-            <div class="section">
-                <h2>🚗 Project Overview</h2>
-                <p>The Parking Management System is a full-stack web application designed to manage employee parking allocations, EV charging station bookings, and parking waitlists for corporate environments. This project demonstrates practical implementation of database design principles, CRUD operations, and complex SQL queries.</p>
-            </div>
-            
-            <div class="section">
-                <h2>💻 Technology Stack</h2>
-                <div class="tech-stack">
-                    <div class="tech-item">
-                        <h3>Original (2022)</h3>
-                        <p>PHP 7.4 + OCI8</p>
-                        <p>Oracle Database</p>
-                        <p style="color: #e74c3c;">Service Terminated</p>
-                    </div>
-                    <div class="tech-item">
-                        <h3>Current (2025)</h3>
-                        <p>Python 3.12</p>
-                        <p>SQLite3</p>
-                        <p style="color: #27ae60;">Active</p>
-                    </div>
-                    <div class="tech-item">
-                        <h3>Frontend</h3>
-                        <p>HTML5</p>
-                        <p>CSS3</p>
-                        <p>Responsive Design</p>
-                    </div>
-                    <div class="tech-item">
-                        <h3>Deployment</h3>
-                        <p>CGI Scripts</p>
-                        <p>Static Hosting</p>
-                        <p>Flask (Optional)</p>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="section">
-                <h2>🎯 Key Features</h2>
-                <div class="features">
-                    <div class="feature-card">
-                        <h3>Employee Management</h3>
-                        <ul>
-                            <li>Track full-time and part-time employees</li>
-                            <li>Department-based organization</li>
-                            <li>Age and status tracking</li>
-                            <li>Comprehensive employee reports</li>
-                        </ul>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Parking Allocation</h3>
-                        <ul>
-                            <li>Building-based parking capacity</li>
-                            <li>Automatic spot assignment</li>
-                            <li>Temporary assignments</li>
-                            <li>Real-time availability tracking</li>
-                        </ul>
-                    </div>
-                    <div class="feature-card">
-                        <h3>EV Charging Management</h3>
-                        <ul>
-                            <li>Time-slot based booking</li>
-                            <li>Fast charging support</li>
-                            <li>Booking authorization</li>
-                            <li>Usage history tracking</li>
-                        </ul>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Waitlist System</h3>
-                        <ul>
-                            <li>Automated waitlist management</li>
-                            <li>Priority-based allocation</li>
-                            <li>Date tracking</li>
-                            <li>Status notifications</li>
-                        </ul>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Security & Access</h3>
-                        <ul>
-                            <li>User authentication</li>
-                            <li>Role-based permissions</li>
-                            <li>Admin controls</li>
-                            <li>Secure password storage</li>
-                        </ul>
-                    </div>
-                    <div class="feature-card">
-                        <h3>Reporting</h3>
-                        <ul>
-                            <li>Employee status reports</li>
-                            <li>Parking utilization</li>
-                            <li>Waitlist analytics</li>
-                            <li>Custom queries</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="section">
-                <h2>🗄️ Database Schema</h2>
-                <p>The system uses a normalized relational database with 7 main tables:</p>
-                <div class="code-structure">
-                    <pre>
-parking_dbms/
-├── buildingInfo       # Buildings and parking capacity
-├── departmentInfo     # Department-building relationships  
-├── employeeInfo       # Employee records
-├── loginInfo          # Authentication and authorization
-├── parkingInfo        # Parking spot allocations
-├── evBook             # EV charging bookings
-└── parkingWaitList    # Parking waitlist queue</pre>
-                </div>
-            </div>
-            
-            <div class="section">
-                <h2>📁 Project Structure</h2>
-                <div class="code-structure">
-                    <pre>
-parking-dbms/
-├── archive/php-original/      # Original PHP implementation
-│   ├── index.php             # Main entry point
-│   ├── displayEmployee.php   # Employee listing
-│   ├── displayWaitList.php   # Waitlist display
-│   └── utils/                # Database maintenance pages
-├── src/
-│   ├── parkingdata.sql       # Database schema and data
-│   ├── migrate_to_oci.sql    # OCI migration script
-│   └── config/               # Database configuration
-├── python_app/               # Python Flask alternative
-├── cgi-bin/                  # Python CGI scripts
-├── docs/                     # Documentation
-└── README.md                 # Project documentation</pre>
-                </div>
-            </div>
-            
-            <div class="section">
-                <h2>📈 Development Timeline</h2>
-                <div class="timeline">
-                    <div class="timeline-item">
-                        <div class="timeline-date">
-                            <span>1</span>
-                        </div>
-                        <div class="timeline-content">
-                            <h4>Initial Development</h4>
-                            <p>Created database schema with Oracle SQL, implemented core CRUD operations</p>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">
-                            <span>2</span>
-                        </div>
-                        <div class="timeline-content">
-                            <h4>Feature Implementation</h4>
-                            <p>Added employee management, parking allocation, and EV booking systems</p>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">
-                            <span>3</span>
-                        </div>
-                        <div class="timeline-content">
-                            <h4>UI Enhancement</h4>
-                            <p>Improved user interface with modern CSS and responsive design</p>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">
-                            <span>4</span>
-                        </div>
-                        <div class="timeline-content">
-                            <h4>Course Completion</h4>
-                            <p>Database course ended, PHP and Oracle services terminated</p>
-                        </div>
-                    </div>
-                    <div class="timeline-item">
-                        <div class="timeline-date">
-                            <span>5</span>
-                        </div>
-                        <div class="timeline-content">
-                            <h4>Python/SQLite Migration</h4>
-                            <p>Rebuilt application using Python and SQLite to preserve functionality</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="section">
-                <h2>🔗 Resources</h2>
-                <div class="links">
-                    <a href="https://github.com/czhaoca/parking-dbms" class="btn btn-github" target="_blank">
-                        📦 View on GitHub
-                    </a>
-                    <a href="README.md" class="btn btn-secondary">
-                        📖 Documentation
-                    </a>
-                    <a href="archive/php-original/" class="btn btn-secondary">
-                        💾 Original PHP Code
-                    </a>
-                    <a href="src/parkingdata.sql" class="btn btn-secondary">
-                        🗄️ Database Schema
-                    </a>
-                </div>
-            </div>
-            
-            <div class="section">
-                <h2>🎓 Learning Outcomes</h2>
-                <p>This project demonstrates proficiency in:</p>
-                <ul style="columns: 2; column-gap: 2rem; margin-top: 1rem;">
-                    <li>✓ Database design and normalization</li>
-                    <li>✓ SQL query optimization</li>
-                    <li>✓ CRUD operations implementation</li>
-                    <li>✓ Web application architecture</li>
-                    <li>✓ User authentication and authorization</li>
-                    <li>✓ Frontend/backend integration</li>
-                    <li>✓ Error handling and validation</li>
-                    <li>✓ Cloud deployment strategies</li>
-                    <li>✓ Cross-platform compatibility</li>
-                    <li>✓ Documentation and code organization</li>
-                </ul>
-            </div>
+        <div class="nav-menu">
+            <button class="nav-button active" onclick="showSection('overview')">Overview</button>
+            <button class="nav-button" onclick="showSection('employees')">Employee Management</button>
+            <button class="nav-button" onclick="showSection('parking')">Parking Management</button>
+            <button class="nav-button" onclick="showSection('reports')">Reports</button>
+            <button class="nav-button" onclick="showSection('setup')">Database Setup</button>
         </div>
         
-        <footer>
-            <p>&copy; 2022-2025 Parking Management System</p>
-            <p>Database Course Project - Educational Purpose Only</p>
-        </footer>
+        <!-- Overview Section -->
+        <div id="overview" class="content-section active">
+            <h2>System Overview</h2>
+            <p>This Parking Database Management System helps manage employee parking allocations, EV charging bookings, and parking waitlists.</p>
+            
+            <h3>Database Tables:</h3>
+            <ul>
+                <li><strong>buildingInfo</strong> - Buildings and their parking capacity</li>
+                <li><strong>departmentInfo</strong> - Departments linked to buildings</li>
+                <li><strong>employeeInfo</strong> - Employee records with department assignments</li>
+                <li><strong>loginInfo</strong> - User authentication and authorization</li>
+                <li><strong>parkingInfo</strong> - Parking spot allocations</li>
+                <li><strong>evBook</strong> - EV charging station bookings</li>
+                <li><strong>parkingWaitList</strong> - Waiting list for parking spots</li>
+            </ul>
+            
+            <h3>Connection Details:</h3>
+            <div class="sql-output">
+Server: dbhost.students.cs.ubc.ca:1522/stu
+Username: ora_[your_username]
+Password: a[your_student_number]</div>
+        </div>
+        
+        <!-- Employee Management Section -->
+        <div id="employees" class="content-section">
+            <h2>Employee Management</h2>
+            
+            <h3>Add New Employee</h3>
+            <div class="form-group">
+                <label>Employee ID:</label>
+                <input type="number" id="emp-id" placeholder="e.g., 31">
+            </div>
+            <div class="form-group">
+                <label>First Name:</label>
+                <input type="text" id="emp-fname" placeholder="e.g., John">
+            </div>
+            <div class="form-group">
+                <label>Last Name:</label>
+                <input type="text" id="emp-lname" placeholder="e.g., Doe">
+            </div>
+            <div class="form-group">
+                <label>Status:</label>
+                <select id="emp-status">
+                    <option value="FT">Full Time (FT)</option>
+                    <option value="PT">Part Time (PT)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Department ID:</label>
+                <input type="number" id="emp-dept" placeholder="e.g., 1">
+            </div>
+            <div class="form-group">
+                <label>Age:</label>
+                <input type="number" id="emp-age" placeholder="e.g., 30">
+            </div>
+            <button class="generate-btn" onclick="generateEmployeeInsert()">Generate INSERT SQL</button>
+            
+            <div id="emp-insert-sql" style="display:none;">
+                <h4>Generated SQL:</h4>
+                <div class="sql-output" id="emp-insert-output"></div>
+                <button class="copy-btn" onclick="copyToClipboard('emp-insert-output')">Copy SQL</button>
+            </div>
+            
+            <h3>Other Employee Operations</h3>
+            <div class="sql-output">
+-- View all employees
+SELECT e.*, d.departmentName 
+FROM employeeInfo e 
+JOIN departmentInfo d ON e.departmentId = d.departmentId 
+ORDER BY e.employeeId;
+
+-- Delete an employee (replace [ID] with actual employee ID)
+DELETE FROM employeeInfo WHERE employeeId = [ID];
+
+-- Update employee department (replace values)
+UPDATE employeeInfo 
+SET departmentId = [NEW_DEPT_ID] 
+WHERE employeeId = [EMPLOYEE_ID];</div>
+        </div>
+        
+        <!-- Parking Management Section -->
+        <div id="parking" class="content-section">
+            <h2>Parking Management</h2>
+            
+            <h3>Assign Parking Spot</h3>
+            <div class="form-group">
+                <label>Parking Number:</label>
+                <input type="number" id="park-num" placeholder="e.g., 7">
+            </div>
+            <div class="form-group">
+                <label>Employee ID:</label>
+                <input type="number" id="park-empid" placeholder="e.g., 15">
+            </div>
+            <button class="generate-btn" onclick="generateParkingAssign()">Generate UPDATE SQL</button>
+            
+            <div id="park-assign-sql" style="display:none;">
+                <h4>Generated SQL:</h4>
+                <div class="sql-output" id="park-assign-output"></div>
+                <button class="copy-btn" onclick="copyToClipboard('park-assign-output')">Copy SQL</button>
+            </div>
+            
+            <h3>Other Parking Operations</h3>
+            <div class="sql-output">
+-- View available parking spots
+SELECT parkingNum, evCharge, fastCharge 
+FROM parkingInfo 
+WHERE employeeId IS NULL 
+ORDER BY parkingNum;
+
+-- View occupied parking spots
+SELECT p.parkingNum, e.firstName, e.lastName, e.employeeId
+FROM parkingInfo p
+JOIN employeeInfo e ON p.employeeId = e.employeeId
+ORDER BY p.parkingNum;
+
+-- Release a parking spot (replace [PARKING_NUM])
+UPDATE parkingInfo 
+SET employeeId = NULL 
+WHERE parkingNum = [PARKING_NUM];
+
+-- Add to waitlist (replace values)
+INSERT INTO parkingWaitList (waitListId, employeeId, waitFrom, parkingNum)
+VALUES ([ID], [EMP_ID], TO_CHAR(SYSDATE, 'YYYY-MM-DD'), NULL);</div>
+        </div>
+        
+        <!-- Reports Section -->
+        <div id="reports" class="content-section">
+            <h2>Reports</h2>
+            
+            <h3>Common Reports</h3>
+            <div class="sql-output">
+-- 1. Employee Status Report (FT/PT Count)
+SELECT employeeStatus, COUNT(*) as count 
+FROM employeeInfo 
+GROUP BY employeeStatus;
+
+-- 2. Full Time Employees List
+SELECT e.employeeId, e.firstName, e.lastName, d.departmentName 
+FROM employeeInfo e 
+JOIN departmentInfo d ON e.departmentId = d.departmentId 
+WHERE e.employeeStatus = 'FT' 
+ORDER BY e.lastName;
+
+-- 3. Current Parking Waitlist
+SELECT w.waitListId, e.firstName, e.lastName, w.waitFrom
+FROM parkingWaitList w
+JOIN employeeInfo e ON w.employeeId = e.employeeId
+WHERE w.parkingNum IS NULL
+ORDER BY w.waitFrom;
+
+-- 4. Youngest Employee
+SELECT e.*, d.departmentName 
+FROM employeeInfo e
+JOIN departmentInfo d ON e.departmentId = d.departmentId
+WHERE e.age = (SELECT MIN(age) FROM employeeInfo);
+
+-- 5. Department Parking Statistics
+SELECT d.departmentName, 
+       COUNT(DISTINCT e.employeeId) as total_employees,
+       COUNT(DISTINCT p.parkingNum) as assigned_spots
+FROM departmentInfo d
+LEFT JOIN employeeInfo e ON d.departmentId = e.departmentId
+LEFT JOIN parkingInfo p ON e.employeeId = p.employeeId
+GROUP BY d.departmentName
+ORDER BY assigned_spots DESC;
+
+-- 6. Parking Utilization Summary
+SELECT 
+    COUNT(*) as total_spots,
+    COUNT(employeeId) as occupied_spots,
+    COUNT(*) - COUNT(employeeId) as available_spots,
+    ROUND(COUNT(employeeId) * 100.0 / COUNT(*), 2) as utilization_percent
+FROM parkingInfo;
+
+-- 7. EV Charging Station Usage
+SELECT 
+    COUNT(*) as total_bookings,
+    COUNT(DISTINCT employeeId) as unique_users,
+    COUNT(DISTINCT parkingNum) as stations_used
+FROM evBook;</div>
+        </div>
+        
+        <!-- Database Setup Section -->
+        <div id="setup" class="content-section">
+            <h2>Database Setup</h2>
+            <p>Copy and execute these SQL commands to set up the database:</p>
+            
+            <h3>1. Create Tables</h3>
+            <div class="sql-output">
+-- Run the complete parkingdata.sql file to:
+-- 1. Drop existing tables (if any)
+-- 2. Create all tables with proper constraints
+-- 3. Insert sample data
+-- 4. Grant public access
+
+-- Location: src/parkingdata.sql</div>
+            
+            <h3>2. Verify Installation</h3>
+            <div class="sql-output">
+-- Check all tables were created
+SELECT table_name FROM user_tables 
+WHERE table_name IN ('BUILDINGINFO', 'DEPARTMENTINFO', 'EMPLOYEEINFO', 
+                     'LOGININFO', 'PARKINGINFO', 'EVBOOK', 'PARKINGWAITLIST');
+
+-- Count records in each table
+SELECT 'employeeInfo' as table_name, COUNT(*) as record_count FROM employeeInfo
+UNION ALL
+SELECT 'buildingInfo', COUNT(*) FROM buildingInfo
+UNION ALL
+SELECT 'departmentInfo', COUNT(*) FROM departmentInfo
+UNION ALL
+SELECT 'parkingInfo', COUNT(*) FROM parkingInfo
+UNION ALL
+SELECT 'parkingWaitList', COUNT(*) FROM parkingWaitList
+UNION ALL
+SELECT 'evBook', COUNT(*) FROM evBook
+UNION ALL
+SELECT 'loginInfo', COUNT(*) FROM loginInfo;</div>
+        </div>
     </div>
+    
+    <script>
+        function showSection(sectionId) {
+            // Hide all sections
+            const sections = document.querySelectorAll('.content-section');
+            sections.forEach(section => section.classList.remove('active'));
+            
+            // Remove active class from all buttons
+            const buttons = document.querySelectorAll('.nav-button');
+            buttons.forEach(button => button.classList.remove('active'));
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            
+            // Add active class to clicked button
+            event.target.classList.add('active');
+        }
+        
+        function generateEmployeeInsert() {
+            const id = document.getElementById('emp-id').value;
+            const fname = document.getElementById('emp-fname').value;
+            const lname = document.getElementById('emp-lname').value;
+            const status = document.getElementById('emp-status').value;
+            const dept = document.getElementById('emp-dept').value;
+            const age = document.getElementById('emp-age').value;
+            
+            if (!id || !fname || !lname || !dept || !age) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            const sql = `INSERT INTO employeeInfo (employeeId, firstName, lastName, employeeStatus, departmentId, age)
+VALUES (${id}, '${fname}', '${lname}', '${status}', ${dept}, ${age});
+
+-- Don't forget to commit!
+COMMIT;`;
+            
+            document.getElementById('emp-insert-output').textContent = sql;
+            document.getElementById('emp-insert-sql').style.display = 'block';
+        }
+        
+        function generateParkingAssign() {
+            const parkNum = document.getElementById('park-num').value;
+            const empId = document.getElementById('park-empid').value;
+            
+            if (!parkNum || !empId) {
+                alert('Please fill in all fields');
+                return;
+            }
+            
+            const sql = `-- First check if parking spot is available
+SELECT parkingNum, employeeId 
+FROM parkingInfo 
+WHERE parkingNum = ${parkNum};
+
+-- If available (employeeId is NULL), assign it
+UPDATE parkingInfo 
+SET employeeId = ${empId} 
+WHERE parkingNum = ${parkNum} 
+  AND employeeId IS NULL;
+
+-- Verify the update
+SELECT p.parkingNum, e.firstName, e.lastName 
+FROM parkingInfo p 
+JOIN employeeInfo e ON p.employeeId = e.employeeId 
+WHERE p.parkingNum = ${parkNum};
+
+-- Don't forget to commit!
+COMMIT;`;
+            
+            document.getElementById('park-assign-output').textContent = sql;
+            document.getElementById('park-assign-sql').style.display = 'block';
+        }
+        
+        function copyToClipboard(elementId) {
+            const text = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                alert('SQL copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy: ', err);
+                // Fallback for older browsers
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('SQL copied to clipboard!');
+            });
+        }
+    </script>
 </body>
 </html>

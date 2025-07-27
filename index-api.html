@@ -1,0 +1,561 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Database Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .mode-selector {
+            text-align: center;
+            margin: 20px 0;
+            padding: 10px;
+            background-color: #e3f2fd;
+            border-radius: 5px;
+        }
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .nav-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .nav-button:hover {
+            background-color: #45a049;
+        }
+        .nav-button.active {
+            background-color: #2196F3;
+        }
+        .content-section {
+            display: none;
+            margin-top: 20px;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .api-status {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .api-status.connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .api-status.disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .data-table th, .data-table td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .data-table th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .data-table tr:hover {
+            background-color: #f5f5f5;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: inline-block;
+            width: 150px;
+            font-weight: bold;
+        }
+        input, select {
+            padding: 5px;
+            width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        .button {
+            background-color: #2196F3;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        .button:hover {
+            background-color: #1976D2;
+        }
+        .success {
+            color: green;
+            margin: 10px 0;
+        }
+        .error {
+            color: red;
+            margin: 10px 0;
+        }
+        .sql-output {
+            background-color: #f0f0f0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: 'Courier New', monospace;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Parking Database Management System</h1>
+        
+        <div class="mode-selector">
+            <strong>Mode:</strong>
+            <label><input type="radio" name="mode" value="api" checked> API Mode (Python Server)</label>
+            <label><input type="radio" name="mode" value="sql"> SQL Generator Mode</label>
+            <div id="api-status" class="api-status"></div>
+        </div>
+        
+        <div class="nav-menu">
+            <button class="nav-button active" onclick="showSection('overview')">Overview</button>
+            <button class="nav-button" onclick="showSection('employees')">Employee Management</button>
+            <button class="nav-button" onclick="showSection('parking')">Parking Management</button>
+            <button class="nav-button" onclick="showSection('reports')">Reports</button>
+        </div>
+        
+        <!-- Overview Section -->
+        <div id="overview" class="content-section active">
+            <h2>System Overview</h2>
+            <p>This system manages employee parking allocations, EV charging bookings, and parking waitlists.</p>
+            
+            <div id="overview-api" style="display:none;">
+                <h3>Database Status</h3>
+                <div id="db-status"></div>
+            </div>
+            
+            <div id="overview-sql">
+                <h3>Database Tables:</h3>
+                <ul>
+                    <li><strong>buildingInfo</strong> - Buildings and their parking capacity</li>
+                    <li><strong>departmentInfo</strong> - Departments linked to buildings</li>
+                    <li><strong>employeeInfo</strong> - Employee records</li>
+                    <li><strong>loginInfo</strong> - User authentication</li>
+                    <li><strong>parkingInfo</strong> - Parking spot allocations</li>
+                    <li><strong>evBook</strong> - EV charging bookings</li>
+                    <li><strong>parkingWaitList</strong> - Waiting list</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Employee Management Section -->
+        <div id="employees" class="content-section">
+            <h2>Employee Management</h2>
+            
+            <div id="employees-api" style="display:none;">
+                <h3>Add New Employee</h3>
+                <div class="form-group">
+                    <label>Employee ID:</label>
+                    <input type="number" id="api-emp-id" placeholder="e.g., 31">
+                </div>
+                <div class="form-group">
+                    <label>First Name:</label>
+                    <input type="text" id="api-emp-fname" placeholder="e.g., John">
+                </div>
+                <div class="form-group">
+                    <label>Last Name:</label>
+                    <input type="text" id="api-emp-lname" placeholder="e.g., Doe">
+                </div>
+                <div class="form-group">
+                    <label>Status:</label>
+                    <select id="api-emp-status">
+                        <option value="FT">Full Time (FT)</option>
+                        <option value="PT">Part Time (PT)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Department ID:</label>
+                    <input type="number" id="api-emp-dept" placeholder="e.g., 1">
+                </div>
+                <div class="form-group">
+                    <label>Age:</label>
+                    <input type="number" id="api-emp-age" placeholder="e.g., 30">
+                </div>
+                <button class="button" onclick="addEmployeeAPI()">Add Employee</button>
+                <div id="emp-result"></div>
+                
+                <h3>Current Employees</h3>
+                <div id="employee-list"></div>
+            </div>
+            
+            <div id="employees-sql">
+                <h3>Employee SQL Commands</h3>
+                <div class="sql-output">
+-- Add new employee
+INSERT INTO employeeInfo (employeeId, firstName, lastName, employeeStatus, departmentId, age)
+VALUES (31, 'John', 'Doe', 'FT', 1, 30);
+
+-- View all employees
+SELECT e.*, d.departmentName 
+FROM employeeInfo e 
+JOIN departmentInfo d ON e.departmentId = d.departmentId 
+ORDER BY e.employeeId;
+
+-- Delete employee
+DELETE FROM employeeInfo WHERE employeeId = 31;
+
+-- Update employee
+UPDATE employeeInfo 
+SET departmentId = 2 
+WHERE employeeId = 31;</div>
+            </div>
+        </div>
+        
+        <!-- Parking Management Section -->
+        <div id="parking" class="content-section">
+            <h2>Parking Management</h2>
+            
+            <div id="parking-api" style="display:none;">
+                <h3>Parking Status</h3>
+                <div id="parking-list"></div>
+            </div>
+            
+            <div id="parking-sql">
+                <h3>Parking SQL Commands</h3>
+                <div class="sql-output">
+-- View available spots
+SELECT parkingNum, evCharge, fastCharge 
+FROM parkingInfo 
+WHERE employeeId IS NULL 
+ORDER BY parkingNum;
+
+-- Assign parking spot
+UPDATE parkingInfo 
+SET employeeId = 15 
+WHERE parkingNum = 7;
+
+-- Release parking spot
+UPDATE parkingInfo 
+SET employeeId = NULL 
+WHERE parkingNum = 7;
+
+-- View occupied spots
+SELECT p.parkingNum, e.firstName, e.lastName 
+FROM parkingInfo p
+JOIN employeeInfo e ON p.employeeId = e.employeeId
+ORDER BY p.parkingNum;</div>
+            </div>
+        </div>
+        
+        <!-- Reports Section -->
+        <div id="reports" class="content-section">
+            <h2>Reports</h2>
+            
+            <div id="reports-api" style="display:none;">
+                <h3>Live Reports</h3>
+                <div id="reports-data"></div>
+            </div>
+            
+            <div id="reports-sql">
+                <h3>Report SQL Queries</h3>
+                <div class="sql-output">
+-- Employee Status Report
+SELECT employeeStatus, COUNT(*) as count 
+FROM employeeInfo 
+GROUP BY employeeStatus;
+
+-- Parking Utilization
+SELECT 
+    COUNT(*) as total_spots,
+    COUNT(employeeId) as occupied,
+    COUNT(*) - COUNT(employeeId) as available
+FROM parkingInfo;
+
+-- Current Waitlist
+SELECT w.waitListId, e.firstName, e.lastName, w.waitFrom
+FROM parkingWaitList w
+JOIN employeeInfo e ON w.employeeId = e.employeeId
+WHERE w.parkingNum IS NULL
+ORDER BY w.waitFrom;
+
+-- Department Statistics
+SELECT d.departmentName, 
+       COUNT(DISTINCT e.employeeId) as employees,
+       COUNT(DISTINCT p.parkingNum) as parking_spots
+FROM departmentInfo d
+LEFT JOIN employeeInfo e ON d.departmentId = e.departmentId
+LEFT JOIN parkingInfo p ON e.employeeId = p.employeeId
+GROUP BY d.departmentName;</div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        let apiMode = true;
+        let apiConnected = false;
+        
+        // Check API connection
+        async function checkAPIConnection() {
+            try {
+                const response = await fetch('/api/status');
+                if (response.ok) {
+                    apiConnected = true;
+                    document.getElementById('api-status').className = 'api-status connected';
+                    document.getElementById('api-status').textContent = 'API Connected (Python Server Running)';
+                    return true;
+                }
+            } catch (error) {
+                // API not available
+            }
+            
+            apiConnected = false;
+            document.getElementById('api-status').className = 'api-status disconnected';
+            document.getElementById('api-status').textContent = 'API Disconnected (SQL Generator Mode Only)';
+            
+            // Switch to SQL mode if API not available
+            document.querySelector('input[value="sql"]').checked = true;
+            updateMode();
+            return false;
+        }
+        
+        // Update display mode
+        function updateMode() {
+            apiMode = document.querySelector('input[name="mode"]:checked').value === 'api';
+            
+            // Show/hide appropriate sections
+            document.querySelectorAll('[id$="-api"]').forEach(el => {
+                el.style.display = apiMode && apiConnected ? 'block' : 'none';
+            });
+            
+            document.querySelectorAll('[id$="-sql"]').forEach(el => {
+                el.style.display = !apiMode || !apiConnected ? 'block' : 'none';
+            });
+            
+            // Load data if in API mode
+            if (apiMode && apiConnected) {
+                loadCurrentSection();
+            }
+        }
+        
+        // Show section
+        function showSection(sectionId) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active class from buttons
+            document.querySelectorAll('.nav-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Load data if in API mode
+            if (apiMode && apiConnected) {
+                if (sectionId === 'overview') loadDatabaseStatus();
+                else if (sectionId === 'employees') loadEmployees();
+                else if (sectionId === 'parking') loadParking();
+                else if (sectionId === 'reports') loadReports();
+            }
+        }
+        
+        // Load current section data
+        function loadCurrentSection() {
+            const activeSection = document.querySelector('.content-section.active');
+            if (activeSection) {
+                const sectionId = activeSection.id;
+                if (sectionId === 'overview') loadDatabaseStatus();
+                else if (sectionId === 'employees') loadEmployees();
+                else if (sectionId === 'parking') loadParking();
+                else if (sectionId === 'reports') loadReports();
+            }
+        }
+        
+        // API Functions
+        async function loadDatabaseStatus() {
+            try {
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                
+                let html = '<table class="data-table">';
+                html += '<tr><th>Table</th><th>Record Count</th></tr>';
+                
+                for (const [table, count] of Object.entries(data)) {
+                    html += `<tr><td>${table}</td><td>${count}</td></tr>`;
+                }
+                
+                html += '</table>';
+                document.getElementById('db-status').innerHTML = html;
+            } catch (error) {
+                document.getElementById('db-status').innerHTML = '<p class="error">Error loading status</p>';
+            }
+        }
+        
+        async function loadEmployees() {
+            try {
+                const response = await fetch('/api/employees');
+                const employees = await response.json();
+                
+                let html = '<table class="data-table">';
+                html += '<tr><th>ID</th><th>Name</th><th>Status</th><th>Department</th><th>Age</th></tr>';
+                
+                employees.forEach(emp => {
+                    html += `<tr>
+                        <td>${emp.employeeId}</td>
+                        <td>${emp.firstName} ${emp.lastName}</td>
+                        <td>${emp.status}</td>
+                        <td>${emp.department}</td>
+                        <td>${emp.age}</td>
+                    </tr>`;
+                });
+                
+                html += '</table>';
+                document.getElementById('employee-list').innerHTML = html;
+            } catch (error) {
+                document.getElementById('employee-list').innerHTML = '<p class="error">Error loading employees</p>';
+            }
+        }
+        
+        async function loadParking() {
+            try {
+                const response = await fetch('/api/parking');
+                const parking = await response.json();
+                
+                let html = '<table class="data-table">';
+                html += '<tr><th>Spot #</th><th>Status</th><th>Employee</th><th>EV Charge</th><th>Fast Charge</th></tr>';
+                
+                parking.forEach(spot => {
+                    const status = spot.employeeId ? 'Occupied' : 'Available';
+                    const employee = spot.employeeName || '-';
+                    html += `<tr>
+                        <td>${spot.parkingNum}</td>
+                        <td>${status}</td>
+                        <td>${employee}</td>
+                        <td>${spot.evCharge ? 'Yes' : 'No'}</td>
+                        <td>${spot.fastCharge ? 'Yes' : 'No'}</td>
+                    </tr>`;
+                });
+                
+                html += '</table>';
+                document.getElementById('parking-list').innerHTML = html;
+            } catch (error) {
+                document.getElementById('parking-list').innerHTML = '<p class="error">Error loading parking data</p>';
+            }
+        }
+        
+        async function loadReports() {
+            try {
+                const response = await fetch('/api/reports');
+                const reports = await response.json();
+                
+                let html = '<h4>Employee Status Breakdown</h4>';
+                html += '<table class="data-table">';
+                html += '<tr><th>Status</th><th>Count</th></tr>';
+                
+                reports.employeeStatus.forEach(([status, count]) => {
+                    html += `<tr><td>${status === 'FT' ? 'Full Time' : 'Part Time'}</td><td>${count}</td></tr>`;
+                });
+                html += '</table>';
+                
+                html += '<h4>Parking Utilization</h4>';
+                const util = reports.parkingUtilization;
+                html += `<p>Total Spots: ${util[0]} | Occupied: ${util[1]} | Available: ${util[2]}</p>`;
+                
+                html += `<h4>Waitlist</h4>`;
+                html += `<p>Employees on waitlist: ${reports.waitlistCount}</p>`;
+                
+                document.getElementById('reports-data').innerHTML = html;
+            } catch (error) {
+                document.getElementById('reports-data').innerHTML = '<p class="error">Error loading reports</p>';
+            }
+        }
+        
+        async function addEmployeeAPI() {
+            const data = {
+                employeeId: parseInt(document.getElementById('api-emp-id').value),
+                firstName: document.getElementById('api-emp-fname').value,
+                lastName: document.getElementById('api-emp-lname').value,
+                status: document.getElementById('api-emp-status').value,
+                departmentId: parseInt(document.getElementById('api-emp-dept').value),
+                age: parseInt(document.getElementById('api-emp-age').value)
+            };
+            
+            try {
+                const response = await fetch('/api/employee/add', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify(data)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    document.getElementById('emp-result').innerHTML = '<p class="success">' + result.message + '</p>';
+                    loadEmployees(); // Reload list
+                    
+                    // Clear form
+                    document.getElementById('api-emp-id').value = '';
+                    document.getElementById('api-emp-fname').value = '';
+                    document.getElementById('api-emp-lname').value = '';
+                    document.getElementById('api-emp-age').value = '';
+                } else {
+                    document.getElementById('emp-result').innerHTML = '<p class="error">Error: ' + result.message + '</p>';
+                }
+            } catch (error) {
+                document.getElementById('emp-result').innerHTML = '<p class="error">Error adding employee</p>';
+            }
+        }
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Check API connection
+            await checkAPIConnection();
+            
+            // Set up mode change listener
+            document.querySelectorAll('input[name="mode"]').forEach(radio => {
+                radio.addEventListener('change', updateMode);
+            });
+            
+            // Initial mode update
+            updateMode();
+            
+            // Check API periodically
+            setInterval(checkAPIConnection, 5000);
+        });
+    </script>
+</body>
+</html>

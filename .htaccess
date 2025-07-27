@@ -1,41 +1,27 @@
-# Basic Apache configuration for Parking Management System
+# Apache configuration for static HTML application
 
-# Set default index file
-DirectoryIndex index.php index.html
+# Set default index files
+DirectoryIndex index.html app.html
 
-# Disable directory listing
+# Disable directory browsing
 Options -Indexes
 
+# Basic MIME types
+AddType text/html .html
+AddType text/css .css
+AddType application/javascript .js
+AddType application/json .json
+
 # Protect sensitive files
-<FilesMatch "\.(env|git|gitignore)$">
+<FilesMatch "\.(db|sql|sh|py|md|bak)$">
     Order allow,deny
     Deny from all
 </FilesMatch>
 
-# Try different PHP handlers (uncomment the one that works)
-# Option 1: Standard PHP handler
-<FilesMatch "\.php$">
-    SetHandler application/x-httpd-php
-</FilesMatch>
-
-# Option 2: PHP-FPM handler (if using PHP-FPM)
-# <FilesMatch "\.php$">
-#     SetHandler "proxy:unix:/run/php/php7.4-fpm.sock|fcgi://localhost"
-# </FilesMatch>
-
-# Option 3: AddHandler method
-# AddHandler application/x-httpd-php .php
-
-# Option 4: Force PHP MIME type
-# AddType application/x-httpd-php .php .phtml
-
-# Basic security
-<IfModule mod_rewrite.c>
-    RewriteEngine On
-    
-    # Prevent access to hidden files
-    RewriteRule ^\.(.*)$ - [F,L]
-    
-    # Prevent access to src/config directory
-    RewriteRule ^src/config/ - [F,L]
+# Cache static assets
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresByType text/html "access plus 0 seconds"
+    ExpiresByType text/css "access plus 1 week"
+    ExpiresByType application/javascript "access plus 1 week"
 </IfModule>

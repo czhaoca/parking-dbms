@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Database Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 20px;
+        }
+        .nav-menu {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 20px 0;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #eee;
+        }
+        .nav-button {
+            padding: 10px 20px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .nav-button:hover {
+            background-color: #45a049;
+        }
+        .nav-button.active {
+            background-color: #2196F3;
+        }
+        .content-section {
+            display: none;
+            margin-top: 20px;
+        }
+        .content-section.active {
+            display: block;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: inline-block;
+            width: 150px;
+            font-weight: bold;
+        }
+        input, select {
+            padding: 5px;
+            width: 200px;
+            border: 1px solid #ddd;
+            border-radius: 3px;
+        }
+        button {
+            background-color: #2196F3;
+            color: white;
+            padding: 8px 15px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #1976D2;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #4CAF50;
+            color: white;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .message {
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+        }
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .actions {
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        .delete-btn {
+            background-color: #f44336;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .delete-btn:hover {
+            background-color: #da190b;
+        }
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        .stat-card {
+            background-color: #f0f0f0;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+        }
+        .stat-card h3 {
+            margin: 0;
+            color: #2196F3;
+            font-size: 2em;
+        }
+        .stat-card p {
+            margin: 5px 0 0 0;
+            color: #666;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Parking Database Management System</h1>
+        <p class="subtitle">Client-Side Database (Browser Storage)</p>
+        
+        <div class="nav-menu">
+            <button class="nav-button active" onclick="showSection('overview')">Overview</button>
+            <button class="nav-button" onclick="showSection('employees')">Employees</button>
+            <button class="nav-button" onclick="showSection('parking')">Parking</button>
+            <button class="nav-button" onclick="showSection('reports')">Reports</button>
+            <button class="nav-button" onclick="showSection('data')">Data Management</button>
+        </div>
+        
+        <!-- Overview Section -->
+        <div id="overview" class="content-section active">
+            <h2>System Overview</h2>
+            <div id="overview-stats" class="stats"></div>
+            
+            <div class="warning message">
+                <strong>Note:</strong> This is a client-side database using browser localStorage. 
+                Data is stored locally in your browser and will persist between sessions on this computer only.
+            </div>
+            
+            <div class="actions">
+                <h3>Quick Actions</h3>
+                <button onclick="initializeSampleData()">Load Sample Data</button>
+                <button onclick="exportData()">Export Database</button>
+                <button onclick="document.getElementById('importFile').click()">Import Database</button>
+                <input type="file" id="importFile" style="display:none" accept=".json" onchange="importData(this)">
+            </div>
+        </div>
+        
+        <!-- Employees Section -->
+        <div id="employees" class="content-section">
+            <h2>Employee Management</h2>
+            
+            <h3>Add New Employee</h3>
+            <div class="form-group">
+                <label>Employee ID:</label>
+                <input type="number" id="emp-id" placeholder="e.g., 31">
+            </div>
+            <div class="form-group">
+                <label>First Name:</label>
+                <input type="text" id="emp-fname" placeholder="e.g., John">
+            </div>
+            <div class="form-group">
+                <label>Last Name:</label>
+                <input type="text" id="emp-lname" placeholder="e.g., Doe">
+            </div>
+            <div class="form-group">
+                <label>Status:</label>
+                <select id="emp-status">
+                    <option value="FT">Full Time (FT)</option>
+                    <option value="PT">Part Time (PT)</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Department:</label>
+                <select id="emp-dept"></select>
+            </div>
+            <div class="form-group">
+                <label>Age:</label>
+                <input type="number" id="emp-age" placeholder="e.g., 30">
+            </div>
+            <button onclick="addEmployee()">Add Employee</button>
+            
+            <h3>Current Employees</h3>
+            <div id="employee-list"></div>
+        </div>
+        
+        <!-- Parking Section -->
+        <div id="parking" class="content-section">
+            <h2>Parking Management</h2>
+            
+            <h3>Assign Parking Spot</h3>
+            <div class="form-group">
+                <label>Employee:</label>
+                <select id="assign-employee"></select>
+            </div>
+            <div class="form-group">
+                <label>Parking Spot:</label>
+                <select id="assign-spot"></select>
+            </div>
+            <button onclick="assignParking()">Assign Parking</button>
+            
+            <h3>Parking Status</h3>
+            <div id="parking-list"></div>
+        </div>
+        
+        <!-- Reports Section -->
+        <div id="reports" class="content-section">
+            <h2>Reports</h2>
+            <div id="reports-content"></div>
+        </div>
+        
+        <!-- Data Management Section -->
+        <div id="data" class="content-section">
+            <h2>Data Management</h2>
+            
+            <div class="actions">
+                <h3>Database Operations</h3>
+                <button onclick="clearDatabase()">Clear All Data</button>
+                <button onclick="initializeSampleData()">Reload Sample Data</button>
+                <button onclick="exportData()">Export to JSON</button>
+                <button onclick="document.getElementById('importFile2').click()">Import from JSON</button>
+                <input type="file" id="importFile2" style="display:none" accept=".json" onchange="importData(this)">
+            </div>
+            
+            <h3>Current Database Size</h3>
+            <div id="db-size"></div>
+        </div>
+    </div>
+    
+    <script>
+        // Database structure
+        let db = {
+            buildings: [],
+            departments: [],
+            employees: [],
+            parking: [],
+            waitlist: []
+        };
+        
+        // Initialize database from localStorage or create new
+        function initDatabase() {
+            const stored = localStorage.getItem('parkingDB');
+            if (stored) {
+                db = JSON.parse(stored);
+            } else {
+                initializeSampleData();
+            }
+            updateAllViews();
+        }
+        
+        // Save database to localStorage
+        function saveDatabase() {
+            localStorage.setItem('parkingDB', JSON.stringify(db));
+        }
+        
+        // Initialize with sample data
+        function initializeSampleData() {
+            db = {
+                buildings: [
+                    {id: 1, name: 'Executive Office', capacity: 25},
+                    {id: 2, name: 'Administration Office', capacity: 60},
+                    {id: 3, name: 'Cafeteria Building', capacity: 15},
+                    {id: 4, name: 'IT Office', capacity: 35}
+                ],
+                departments: [
+                    {id: 1, name: 'Executive Department', buildingId: 1},
+                    {id: 2, name: 'Chairman Office', buildingId: 1},
+                    {id: 3, name: 'Marketing Department', buildingId: 1},
+                    {id: 4, name: 'Human Resources', buildingId: 1},
+                    {id: 5, name: 'Finance Department', buildingId: 2},
+                    {id: 6, name: 'IT Support', buildingId: 4}
+                ],
+                employees: [
+                    {id: 1, firstName: 'Sharon', lastName: 'Hsu', status: 'FT', departmentId: 1, age: 55},
+                    {id: 2, firstName: 'Jimmy', lastName: 'Lee', status: 'FT', departmentId: 2, age: 35},
+                    {id: 3, firstName: 'Tom', lastName: 'Ford', status: 'FT', departmentId: 3, age: 35},
+                    {id: 4, firstName: 'Deva', lastName: 'Reeb', status: 'FT', departmentId: 3, age: 45},
+                    {id: 5, firstName: 'Joe', lastName: 'Woodward', status: 'FT', departmentId: 4, age: 37}
+                ],
+                parking: [
+                    {spotNumber: 1, employeeId: null, evCharge: true, fastCharge: true},
+                    {spotNumber: 2, employeeId: null, evCharge: true, fastCharge: true},
+                    {spotNumber: 3, employeeId: null, evCharge: true, fastCharge: false},
+                    {spotNumber: 4, employeeId: null, evCharge: false, fastCharge: false},
+                    {spotNumber: 5, employeeId: null, evCharge: false, fastCharge: false},
+                    {spotNumber: 60, employeeId: 1, evCharge: false, fastCharge: false},
+                    {spotNumber: 61, employeeId: 2, evCharge: false, fastCharge: false}
+                ],
+                waitlist: []
+            };
+            saveDatabase();
+            showMessage('Sample data loaded successfully!', 'success');
+            updateAllViews();
+        }
+        
+        // Show section
+        function showSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            document.querySelectorAll('.nav-button').forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            document.getElementById(sectionId).classList.add('active');
+            event.target.classList.add('active');
+            
+            // Update views when switching sections
+            if (sectionId === 'overview') updateOverview();
+            else if (sectionId === 'employees') updateEmployeeView();
+            else if (sectionId === 'parking') updateParkingView();
+            else if (sectionId === 'reports') updateReports();
+            else if (sectionId === 'data') updateDataView();
+        }
+        
+        // Update all views
+        function updateAllViews() {
+            updateOverview();
+            updateEmployeeView();
+            updateParkingView();
+            updateReports();
+            updateDataView();
+        }
+        
+        // Update overview
+        function updateOverview() {
+            const stats = document.getElementById('overview-stats');
+            const totalEmployees = db.employees.length;
+            const ftEmployees = db.employees.filter(e => e.status === 'FT').length;
+            const totalSpots = db.parking.length;
+            const occupiedSpots = db.parking.filter(p => p.employeeId !== null).length;
+            
+            stats.innerHTML = `
+                <div class="stat-card">
+                    <h3>${totalEmployees}</h3>
+                    <p>Total Employees</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${ftEmployees}</h3>
+                    <p>Full Time</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${occupiedSpots}/${totalSpots}</h3>
+                    <p>Parking Occupied</p>
+                </div>
+                <div class="stat-card">
+                    <h3>${db.waitlist.length}</h3>
+                    <p>On Waitlist</p>
+                </div>
+            `;
+        }
+        
+        // Add employee
+        function addEmployee() {
+            const id = parseInt(document.getElementById('emp-id').value);
+            const firstName = document.getElementById('emp-fname').value;
+            const lastName = document.getElementById('emp-lname').value;
+            const status = document.getElementById('emp-status').value;
+            const departmentId = parseInt(document.getElementById('emp-dept').value);
+            const age = parseInt(document.getElementById('emp-age').value);
+            
+            if (!id || !firstName || !lastName || !departmentId || !age) {
+                showMessage('Please fill all fields', 'error');
+                return;
+            }
+            
+            if (db.employees.find(e => e.id === id)) {
+                showMessage('Employee ID already exists', 'error');
+                return;
+            }
+            
+            db.employees.push({id, firstName, lastName, status, departmentId, age});
+            saveDatabase();
+            
+            // Clear form
+            document.getElementById('emp-id').value = '';
+            document.getElementById('emp-fname').value = '';
+            document.getElementById('emp-lname').value = '';
+            document.getElementById('emp-age').value = '';
+            
+            showMessage('Employee added successfully!', 'success');
+            updateEmployeeView();
+        }
+        
+        // Update employee view
+        function updateEmployeeView() {
+            // Update department dropdown
+            const deptSelect = document.getElementById('emp-dept');
+            deptSelect.innerHTML = db.departments.map(d => 
+                `<option value="${d.id}">${d.name}</option>`
+            ).join('');
+            
+            // Update employee list
+            const list = document.getElementById('employee-list');
+            if (db.employees.length === 0) {
+                list.innerHTML = '<p>No employees found.</p>';
+                return;
+            }
+            
+            let html = '<table><tr><th>ID</th><th>Name</th><th>Status</th><th>Department</th><th>Age</th><th>Parking</th><th>Action</th></tr>';
+            
+            db.employees.forEach(emp => {
+                const dept = db.departments.find(d => d.id === emp.departmentId);
+                const parking = db.parking.find(p => p.employeeId === emp.id);
+                const parkingInfo = parking ? `Spot #${parking.spotNumber}` : 'None';
+                
+                html += `<tr>
+                    <td>${emp.id}</td>
+                    <td>${emp.firstName} ${emp.lastName}</td>
+                    <td>${emp.status}</td>
+                    <td>${dept ? dept.name : 'Unknown'}</td>
+                    <td>${emp.age}</td>
+                    <td>${parkingInfo}</td>
+                    <td><button class="delete-btn" onclick="deleteEmployee(${emp.id})">Delete</button></td>
+                </tr>`;
+            });
+            
+            html += '</table>';
+            list.innerHTML = html;
+        }
+        
+        // Delete employee
+        function deleteEmployee(id) {
+            if (!confirm('Are you sure you want to delete this employee?')) return;
+            
+            db.employees = db.employees.filter(e => e.id !== id);
+            // Release parking spot
+            db.parking.forEach(p => {
+                if (p.employeeId === id) p.employeeId = null;
+            });
+            // Remove from waitlist
+            db.waitlist = db.waitlist.filter(w => w.employeeId !== id);
+            
+            saveDatabase();
+            showMessage('Employee deleted successfully!', 'success');
+            updateAllViews();
+        }
+        
+        // Update parking view
+        function updateParkingView() {
+            // Update employee dropdown
+            const empSelect = document.getElementById('assign-employee');
+            const availableEmployees = db.employees.filter(e => 
+                !db.parking.find(p => p.employeeId === e.id)
+            );
+            
+            empSelect.innerHTML = availableEmployees.map(e => 
+                `<option value="${e.id}">${e.firstName} ${e.lastName}</option>`
+            ).join('');
+            
+            // Update parking spot dropdown
+            const spotSelect = document.getElementById('assign-spot');
+            const availableSpots = db.parking.filter(p => p.employeeId === null);
+            
+            spotSelect.innerHTML = availableSpots.map(p => 
+                `<option value="${p.spotNumber}">Spot #${p.spotNumber}${p.evCharge ? ' (EV)' : ''}</option>`
+            ).join('');
+            
+            // Update parking list
+            const list = document.getElementById('parking-list');
+            let html = '<table><tr><th>Spot #</th><th>Status</th><th>Employee</th><th>EV Charge</th><th>Fast Charge</th><th>Action</th></tr>';
+            
+            db.parking.forEach(spot => {
+                const employee = spot.employeeId ? db.employees.find(e => e.id === spot.employeeId) : null;
+                const empName = employee ? `${employee.firstName} ${employee.lastName}` : '-';
+                const status = spot.employeeId ? 'Occupied' : 'Available';
+                
+                html += `<tr>
+                    <td>${spot.spotNumber}</td>
+                    <td>${status}</td>
+                    <td>${empName}</td>
+                    <td>${spot.evCharge ? 'Yes' : 'No'}</td>
+                    <td>${spot.fastCharge ? 'Yes' : 'No'}</td>
+                    <td>${spot.employeeId ? 
+                        `<button class="delete-btn" onclick="releaseParking(${spot.spotNumber})">Release</button>` : 
+                        '-'}</td>
+                </tr>`;
+            });
+            
+            html += '</table>';
+            list.innerHTML = html;
+        }
+        
+        // Assign parking
+        function assignParking() {
+            const employeeId = parseInt(document.getElementById('assign-employee').value);
+            const spotNumber = parseInt(document.getElementById('assign-spot').value);
+            
+            if (!employeeId || !spotNumber) {
+                showMessage('Please select employee and parking spot', 'error');
+                return;
+            }
+            
+            const spot = db.parking.find(p => p.spotNumber === spotNumber);
+            if (spot) {
+                spot.employeeId = employeeId;
+                saveDatabase();
+                showMessage('Parking assigned successfully!', 'success');
+                updateParkingView();
+            }
+        }
+        
+        // Release parking
+        function releaseParking(spotNumber) {
+            const spot = db.parking.find(p => p.spotNumber === spotNumber);
+            if (spot) {
+                spot.employeeId = null;
+                saveDatabase();
+                showMessage('Parking spot released!', 'success');
+                updateParkingView();
+            }
+        }
+        
+        // Update reports
+        function updateReports() {
+            const content = document.getElementById('reports-content');
+            
+            // Employee status report
+            const ftCount = db.employees.filter(e => e.status === 'FT').length;
+            const ptCount = db.employees.filter(e => e.status === 'PT').length;
+            
+            // Parking utilization
+            const totalSpots = db.parking.length;
+            const occupiedSpots = db.parking.filter(p => p.employeeId !== null).length;
+            const availableSpots = totalSpots - occupiedSpots;
+            const utilization = totalSpots > 0 ? ((occupiedSpots / totalSpots) * 100).toFixed(1) : 0;
+            
+            // Department statistics
+            let deptStats = '<h3>Department Statistics</h3><table><tr><th>Department</th><th>Employees</th><th>Parking Spots</th></tr>';
+            
+            db.departments.forEach(dept => {
+                const empCount = db.employees.filter(e => e.departmentId === dept.id).length;
+                const parkCount = db.employees
+                    .filter(e => e.departmentId === dept.id)
+                    .filter(e => db.parking.find(p => p.employeeId === e.id))
+                    .length;
+                
+                deptStats += `<tr><td>${dept.name}</td><td>${empCount}</td><td>${parkCount}</td></tr>`;
+            });
+            deptStats += '</table>';
+            
+            content.innerHTML = `
+                <h3>Employee Status Report</h3>
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3>${ftCount}</h3>
+                        <p>Full Time</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>${ptCount}</h3>
+                        <p>Part Time</p>
+                    </div>
+                </div>
+                
+                <h3>Parking Utilization</h3>
+                <div class="stats">
+                    <div class="stat-card">
+                        <h3>${occupiedSpots}</h3>
+                        <p>Occupied</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>${availableSpots}</h3>
+                        <p>Available</p>
+                    </div>
+                    <div class="stat-card">
+                        <h3>${utilization}%</h3>
+                        <p>Utilization</p>
+                    </div>
+                </div>
+                
+                ${deptStats}
+            `;
+        }
+        
+        // Update data view
+        function updateDataView() {
+            const size = new Blob([JSON.stringify(db)]).size;
+            const sizeKB = (size / 1024).toFixed(2);
+            
+            document.getElementById('db-size').innerHTML = `
+                <p>Database size: ${sizeKB} KB</p>
+                <p>Total records: ${db.employees.length + db.parking.length + db.departments.length + db.buildings.length}</p>
+            `;
+        }
+        
+        // Show message
+        function showMessage(text, type) {
+            const div = document.createElement('div');
+            div.className = `message ${type}`;
+            div.textContent = text;
+            
+            const firstSection = document.querySelector('.content-section.active');
+            firstSection.insertBefore(div, firstSection.firstChild);
+            
+            setTimeout(() => div.remove(), 3000);
+        }
+        
+        // Export data
+        function exportData() {
+            const dataStr = JSON.stringify(db, null, 2);
+            const dataBlob = new Blob([dataStr], {type: 'application/json'});
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'parking-database.json';
+            link.click();
+            URL.revokeObjectURL(url);
+            showMessage('Database exported successfully!', 'success');
+        }
+        
+        // Import data
+        function importData(input) {
+            const file = input.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    db = JSON.parse(e.target.result);
+                    saveDatabase();
+                    updateAllViews();
+                    showMessage('Database imported successfully!', 'success');
+                } catch (err) {
+                    showMessage('Error importing file: ' + err.message, 'error');
+                }
+            };
+            reader.readAsText(file);
+        }
+        
+        // Clear database
+        function clearDatabase() {
+            if (confirm('Are you sure you want to clear all data? This cannot be undone!')) {
+                db = {buildings: [], departments: [], employees: [], parking: [], waitlist: []};
+                saveDatabase();
+                updateAllViews();
+                showMessage('Database cleared!', 'success');
+            }
+        }
+        
+        // Initialize on load
+        window.onload = function() {
+            initDatabase();
+        };
+    </script>
+</body>
+</html>
