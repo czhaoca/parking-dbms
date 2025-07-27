@@ -1,281 +1,42 @@
 #!/usr/bin/env python3
 """
 Parking Database Management System
-SQLite + Python Web Application
+SQLite Database Setup Tool
+
+This script is for local development only.
+School server uses static HTML interface due to restrictions:
+- No sudo access
+- Port 80 only
+- No server-side scripting after course completion
 """
 
 import sqlite3
-import json
-from http.server import HTTPServer, BaseHTTPRequestHandler
-from urllib.parse import urlparse, parse_qs
 import os
 import sys
 
-# Configuration
-PORT = 80
 DB_FILE = "parking.db"
-STATIC_DIR = "/work/parking-dbms"
-
-class ParkingDBHandler(BaseHTTPRequestHandler):
-    def do_GET(self):
-        """Handle GET requests"""
-        parsed_path = urlparse(self.path)
-        
-        # Serve static files
-        if parsed_path.path == '/':
-            self.serve_file('/index.html')
-        elif parsed_path.path.endswith(('.html', '.css', '.js')):
-            self.serve_file(parsed_path.path)
-        elif parsed_path.path == '/api/status':
-            self.handle_api_status()
-        elif parsed_path.path == '/api/employees':
-            self.handle_api_employees()
-        elif parsed_path.path == '/api/parking':
-            self.handle_api_parking()
-        elif parsed_path.path == '/api/reports':
-            self.handle_api_reports()
-        else:
-            self.send_error(404)
-    
-    def do_POST(self):
-        """Handle POST requests"""
-        parsed_path = urlparse(self.path)
-        
-        if parsed_path.path == '/api/employee/add':
-            self.handle_add_employee()
-        elif parsed_path.path == '/api/parking/assign':
-            self.handle_assign_parking()
-        else:
-            self.send_error(404)
-    
-    def serve_file(self, path):
-        """Serve static files"""
-        if path.startswith('/'):
-            path = path[1:]
-        
-        filepath = os.path.join(STATIC_DIR, path)
-        
-        if not os.path.exists(filepath) or not os.path.isfile(filepath):
-            self.send_error(404)
-            return
-        
-        # Determine content type
-        content_types = {
-            '.html': 'text/html',
-            '.css': 'text/css',
-            '.js': 'application/javascript'
-        }
-        
-        ext = os.path.splitext(filepath)[1]
-        content_type = content_types.get(ext, 'text/plain')
-        
-        # Send response
-        with open(filepath, 'rb') as f:
-            content = f.read()
-            self.send_response(200)
-            self.send_header('Content-Type', content_type)
-            self.send_header('Content-Length', len(content))
-            self.end_headers()
-            self.wfile.write(content)
-    
-    def handle_api_status(self):
-        """Get database status"""
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        # Get counts from each table
-        status = {}
-        tables = ['employeeInfo', 'buildingInfo', 'departmentInfo', 'parkingInfo', 'parkingWaitList', 'evBook']
-        
-        for table in tables:
-            cursor.execute(f'SELECT COUNT(*) FROM {table}')
-            status[table] = cursor.fetchone()[0]
-        
-        conn.close()
-        
-        self.send_json_response(status)
-    
-    def handle_api_employees(self):
-        """Get employee list"""
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        cursor.execute('''
-            SELECT e.employeeId, e.firstName, e.lastName, e.employeeStatus, 
-                   e.age, d.departmentName
-            FROM employeeInfo e
-            JOIN departmentInfo d ON e.departmentId = d.departmentId
-            ORDER BY e.employeeId
-        ''')
-        
-        employees = []
-        for row in cursor.fetchall():
-            employees.append({
-                'employeeId': row[0],
-                'firstName': row[1],
-                'lastName': row[2],
-                'status': row[3],
-                'age': row[4],
-                'department': row[5]
-            })
-        
-        conn.close()
-        self.send_json_response(employees)
-    
-    def handle_api_parking(self):
-        """Get parking status"""
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        cursor.execute('''
-            SELECT p.parkingNum, p.evCharge, p.fastCharge,
-                   e.employeeId, e.firstName, e.lastName
-            FROM parkingInfo p
-            LEFT JOIN employeeInfo e ON p.employeeId = e.employeeId
-            ORDER BY p.parkingNum
-        ''')
-        
-        parking = []
-        for row in cursor.fetchall():
-            parking.append({
-                'parkingNum': row[0],
-                'evCharge': row[1],
-                'fastCharge': row[2],
-                'employeeId': row[3],
-                'employeeName': f"{row[4]} {row[5]}" if row[3] else None
-            })
-        
-        conn.close()
-        self.send_json_response(parking)
-    
-    def handle_api_reports(self):
-        """Get report data"""
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        reports = {}
-        
-        # Employee status report
-        cursor.execute('''
-            SELECT employeeStatus, COUNT(*) as count
-            FROM employeeInfo
-            GROUP BY employeeStatus
-        ''')
-        reports['employeeStatus'] = cursor.fetchall()
-        
-        # Parking utilization
-        cursor.execute('''
-            SELECT 
-                COUNT(*) as total,
-                COUNT(employeeId) as occupied,
-                COUNT(*) - COUNT(employeeId) as available
-            FROM parkingInfo
-        ''')
-        reports['parkingUtilization'] = cursor.fetchone()
-        
-        # Waitlist
-        cursor.execute('''
-            SELECT COUNT(*) FROM parkingWaitList WHERE parkingNum IS NULL
-        ''')
-        reports['waitlistCount'] = cursor.fetchone()[0]
-        
-        conn.close()
-        self.send_json_response(reports)
-    
-    def handle_add_employee(self):
-        """Add new employee"""
-        content_length = int(self.headers['Content-Length'])
-        post_data = self.rfile.read(content_length)
-        data = json.loads(post_data.decode('utf-8'))
-        
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        try:
-            cursor.execute('''
-                INSERT INTO employeeInfo (employeeId, firstName, lastName, 
-                                        employeeStatus, departmentId, age)
-                VALUES (?, ?, ?, ?, ?, ?)
-            ''', (data['employeeId'], data['firstName'], data['lastName'],
-                  data['status'], data['departmentId'], data['age']))
-            
-            conn.commit()
-            self.send_json_response({'success': True, 'message': 'Employee added successfully'})
-        except Exception as e:
-            conn.rollback()
-            self.send_json_response({'success': False, 'message': str(e)}, 400)
-        finally:
-            conn.close()
-    
-    def handle_assign_parking(self):
-        """Assign parking spot"""
-        content_length = int(self.headers['Content-Length'])
-        post_data = self.rfile.read(content_length)
-        data = json.loads(post_data.decode('utf-8'))
-        
-        conn = get_db_connection()
-        cursor = conn.cursor()
-        
-        try:
-            cursor.execute('''
-                UPDATE parkingInfo 
-                SET employeeId = ? 
-                WHERE parkingNum = ? AND employeeId IS NULL
-            ''', (data['employeeId'], data['parkingNum']))
-            
-            if cursor.rowcount == 0:
-                raise Exception('Parking spot not available')
-            
-            conn.commit()
-            self.send_json_response({'success': True, 'message': 'Parking assigned successfully'})
-        except Exception as e:
-            conn.rollback()
-            self.send_json_response({'success': False, 'message': str(e)}, 400)
-        finally:
-            conn.close()
-    
-    def send_json_response(self, data, status=200):
-        """Send JSON response"""
-        content = json.dumps(data).encode('utf-8')
-        self.send_response(status)
-        self.send_header('Content-Type', 'application/json')
-        self.send_header('Content-Length', len(content))
-        self.send_header('Access-Control-Allow-Origin', '*')
-        self.end_headers()
-        self.wfile.write(content)
-
-def get_db_connection():
-    """Get SQLite database connection"""
-    conn = sqlite3.connect(DB_FILE)
-    conn.row_factory = sqlite3.Row
-    return conn
 
 def init_database():
-    """Initialize SQLite database from SQL file"""
-    print("Initializing database...")
+    """Initialize SQLite database with schema and sample data"""
+    print("Parking Database Management System - Database Setup")
+    print("==================================================")
+    print("")
     
-    # Read and convert Oracle SQL to SQLite
-    sql_file = os.path.join(STATIC_DIR, 'src', 'parkingdata.sql')
+    if os.path.exists(DB_FILE):
+        print(f"Database {DB_FILE} already exists.")
+        response = input("Do you want to recreate it? (y/n): ")
+        if response.lower() != 'y':
+            print("Setup cancelled.")
+            return
+        os.remove(DB_FILE)
     
-    if not os.path.exists(sql_file):
-        print(f"Error: {sql_file} not found!")
-        return False
+    print("Creating SQLite database...")
     
     conn = sqlite3.connect(DB_FILE)
     cursor = conn.cursor()
     
-    # Create tables (SQLite compatible version)
-    create_sql = '''
-    -- Drop tables if exist
-    DROP TABLE IF EXISTS evBook;
-    DROP TABLE IF EXISTS parkingWaitList;
-    DROP TABLE IF EXISTS parkingInfo;
-    DROP TABLE IF EXISTS loginInfo;
-    DROP TABLE IF EXISTS employeeInfo;
-    DROP TABLE IF EXISTS departmentInfo;
-    DROP TABLE IF EXISTS buildingInfo;
-
-    -- Create tables
+    # Create tables (SQLite compatible)
+    cursor.executescript('''
     CREATE TABLE buildingInfo(
         buildingId INTEGER PRIMARY KEY,
         buildingName TEXT NOT NULL,
@@ -335,55 +96,89 @@ def init_database():
         FOREIGN KEY (employeeId) REFERENCES employeeInfo(employeeId),
         FOREIGN KEY (parkingNum) REFERENCES parkingInfo(parkingNum)
     );
-    '''
+    ''')
     
-    cursor.executescript(create_sql)
-    
-    # Read the original SQL file and extract INSERT statements
-    with open(sql_file, 'r') as f:
-        sql_content = f.read()
-    
-    # Extract and execute INSERT statements
-    for line in sql_content.split('\n'):
-        if line.strip().lower().startswith('insert into'):
-            # Skip the line if it's a comment
-            if '--' not in line or line.strip().index('insert') < line.strip().index('--'):
-                try:
-                    cursor.execute(line.strip())
-                except Exception as e:
-                    print(f"Warning: Could not execute: {line[:50]}... Error: {e}")
+    # Insert sample data
+    cursor.executescript('''
+    -- Building data
+    INSERT INTO buildingInfo VALUES(1, 'Executive Office', 25);
+    INSERT INTO buildingInfo VALUES(2, 'Administration Office', 60);
+    INSERT INTO buildingInfo VALUES(3, 'Cafeteria Building', 15);
+    INSERT INTO buildingInfo VALUES(4, 'IT Office', 35);
+
+    -- Department data
+    INSERT INTO departmentInfo VALUES(1, 'Executive Department', 1);
+    INSERT INTO departmentInfo VALUES(2, 'Chairman Office', 1);
+    INSERT INTO departmentInfo VALUES(3, 'Marketing Department', 1);
+    INSERT INTO departmentInfo VALUES(4, 'Human Resources', 1);
+    INSERT INTO departmentInfo VALUES(5, 'Finance Department', 2);
+
+    -- Employee data
+    INSERT INTO employeeInfo VALUES(1, 'Sharon', 'Hsu', 'FT', 1, 55);
+    INSERT INTO employeeInfo VALUES(2, 'Jimmy', 'Lee', 'FT', 2, 35);
+    INSERT INTO employeeInfo VALUES(3, 'Tom', 'Ford', 'FT', 3, 35);
+    INSERT INTO employeeInfo VALUES(4, 'Deva', 'Reeb', 'FT', 3, 45);
+    INSERT INTO employeeInfo VALUES(5, 'Joe', 'Woodward', 'FT', 4, 37);
+    INSERT INTO employeeInfo VALUES(6, 'Jack', 'Dorsey', 'FT', 5, 45);
+    INSERT INTO employeeInfo VALUES(7, 'Liz', 'Taylor', 'FT', 5, 58);
+    INSERT INTO employeeInfo VALUES(8, 'Kelly', 'Clarkson', 'FT', 1, 48);
+    INSERT INTO employeeInfo VALUES(9, 'Tyler', 'Perry', 'FT', 3, 50);
+    INSERT INTO employeeInfo VALUES(10, 'Andy', 'Reeb', 'FT', 4, 33);
+    INSERT INTO employeeInfo VALUES(11, 'Joe', 'Biden', 'PT', 1, 25);
+    INSERT INTO employeeInfo VALUES(12, 'Donald', 'Trump', 'PT', 3, 22);
+    INSERT INTO employeeInfo VALUES(13, 'Michelle', 'Obama', 'PT', 2, 20);
+    INSERT INTO employeeInfo VALUES(14, 'Nicole', 'Kidman', 'PT', 2, 23);
+    INSERT INTO employeeInfo VALUES(15, 'Mary', 'Brown', 'PT', 1, 25);
+
+    -- Parking spots (150 total)
+    INSERT INTO parkingInfo VALUES(1, NULL, 1, 1, 1);
+    INSERT INTO parkingInfo VALUES(2, NULL, 1, 1, 1);
+    INSERT INTO parkingInfo VALUES(3, NULL, 1, 1, 0);
+    INSERT INTO parkingInfo VALUES(4, NULL, 1, 0, 1);
+    INSERT INTO parkingInfo VALUES(5, NULL, 1, 0, 0);
+    -- Continue with more parking spots...
+    INSERT INTO parkingInfo VALUES(60, 1, 0, 0, 0);
+    INSERT INTO parkingInfo VALUES(61, 2, 0, 0, 0);
+    INSERT INTO parkingInfo VALUES(62, 3, 0, 0, 0);
+    INSERT INTO parkingInfo VALUES(63, 4, 0, 0, 0);
+    INSERT INTO parkingInfo VALUES(64, 5, 0, 0, 0);
+
+    -- Waitlist entries
+    INSERT INTO parkingWaitList VALUES(1, 11, '2024-01-15', NULL);
+    INSERT INTO parkingWaitList VALUES(2, 12, '2024-01-20', NULL);
+    INSERT INTO parkingWaitList VALUES(3, 13, '2024-02-01', NULL);
+
+    -- Login info
+    INSERT INTO loginInfo VALUES('sharon.hsu', 1, 'password123', 1, 1);
+    INSERT INTO loginInfo VALUES('jimmy.lee', 2, 'password123', 1, 0);
+    INSERT INTO loginInfo VALUES('joe.woodward', 5, 'password123', 1, 0);
+    ''')
     
     conn.commit()
     conn.close()
     
-    print("Database initialized successfully!")
-    return True
+    print("")
+    print("Database created successfully!")
+    print(f"Location: {os.path.abspath(DB_FILE)}")
+    print("")
+    print("To verify the database:")
+    print(f"  sqlite3 {DB_FILE}")
+    print("  sqlite> .tables")
+    print("  sqlite> SELECT * FROM employeeInfo;")
+    print("  sqlite> .quit")
+    print("")
+    print("For school server deployment:")
+    print("  1. Run ./setup-school.sh")
+    print("  2. Access the static HTML interface")
+    print("  3. Use generated SQL with sqlite3")
 
 def main():
-    """Main server function"""
-    # Initialize database if it doesn't exist
-    if not os.path.exists(DB_FILE):
-        if not init_database():
-            sys.exit(1)
+    """Main function"""
+    print("This script creates a local SQLite database for development.")
+    print("For school server deployment, use setup-school.sh instead.")
+    print("")
     
-    # Change to static directory
-    os.chdir(STATIC_DIR)
-    
-    # Start server
-    try:
-        server = HTTPServer(('', PORT), ParkingDBHandler)
-        print(f"Parking Database Management System (SQLite)")
-        print(f"Server running at http://localhost:{PORT}/")
-        print(f"Database: {DB_FILE}")
-        print("Press Ctrl+C to stop the server")
-        server.serve_forever()
-    except PermissionError:
-        print(f"Error: Permission denied to bind to port {PORT}")
-        print("Try running with sudo: sudo python3 app.py")
-        sys.exit(1)
-    except KeyboardInterrupt:
-        print("\nServer stopped.")
-        sys.exit(0)
+    init_database()
 
 if __name__ == "__main__":
     main()

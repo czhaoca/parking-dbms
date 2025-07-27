@@ -1,5 +1,6 @@
 #!/bin/bash
-# Setup script for school Apache server (no sudo required)
+# School Server Setup Script for Parking Database Management System
+# Works with school server restrictions: no sudo, port 80 only, sqlite3/python3/apache
 
 echo "Parking Database Management System - School Server Setup"
 echo "======================================================="
@@ -10,32 +11,41 @@ CURRENT_DIR=$(pwd)
 echo "Setting up in: $CURRENT_DIR"
 echo ""
 
-# Make Python scripts executable
-echo "1. Making Python scripts executable..."
-chmod +x cgi-bin/*.py 2>/dev/null || echo "   Note: cgi-bin scripts will be created"
-chmod +x *.py 2>/dev/null || echo "   Note: No Python scripts in root yet"
-
 # Set proper permissions for Apache
-echo "2. Setting directory permissions..."
-find . -type d -exec chmod 755 {} \;
-find . -type f -exec chmod 644 {} \;
+echo "1. Setting directory permissions..."
+find . -type d -exec chmod 755 {} \; 2>/dev/null
+find . -type f -exec chmod 644 {} \; 2>/dev/null
 
 # Make scripts executable
-chmod 755 cgi-bin/*.py 2>/dev/null
 chmod 755 *.sh 2>/dev/null
 
-# Special permissions for .htaccess
+# Create .htaccess for Apache configuration
+echo "2. Creating Apache configuration..."
+cat > .htaccess << 'EOF'
+# Enable directory listing
+Options +Indexes
+
+# Set index file
+DirectoryIndex index.html
+
+# Add MIME types
+AddType text/html .html
+AddType text/css .css
+AddType application/javascript .js
+EOF
 chmod 644 .htaccess
 
-# Create parking.db with proper permissions
+# Create SQLite database with schema and sample data
 echo "3. Initializing SQLite database..."
 if [ ! -f parking.db ]; then
     python3 -c "
 import sqlite3
+
+# Create database
 conn = sqlite3.connect('parking.db')
 cursor = conn.cursor()
 
-# Create tables
+# Create tables (SQLite compatible)
 cursor.executescript('''
 CREATE TABLE IF NOT EXISTS buildingInfo(
     buildingId INTEGER PRIMARY KEY,
@@ -100,23 +110,27 @@ CREATE TABLE IF NOT EXISTS parkingWaitList(
 
 # Insert sample data
 cursor.executescript('''
+-- Building data
 INSERT OR IGNORE INTO buildingInfo VALUES(1, 'Executive Office', 25);
 INSERT OR IGNORE INTO buildingInfo VALUES(2, 'Administration Office', 60);
 INSERT OR IGNORE INTO buildingInfo VALUES(3, 'Cafeteria Building', 15);
 INSERT OR IGNORE INTO buildingInfo VALUES(4, 'IT Office', 35);
 
+-- Department data
 INSERT OR IGNORE INTO departmentInfo VALUES(1, 'Executive Department', 1);
 INSERT OR IGNORE INTO departmentInfo VALUES(2, 'Chairman Office', 1);
 INSERT OR IGNORE INTO departmentInfo VALUES(3, 'Marketing Department', 1);
 INSERT OR IGNORE INTO departmentInfo VALUES(4, 'Human Resources', 1);
 INSERT OR IGNORE INTO departmentInfo VALUES(5, 'Finance Department', 2);
 
+-- Employee data
 INSERT OR IGNORE INTO employeeInfo VALUES(1, 'Sharon', 'Hsu', 'FT', 1, 55);
 INSERT OR IGNORE INTO employeeInfo VALUES(2, 'Jimmy', 'Lee', 'FT', 2, 35);
 INSERT OR IGNORE INTO employeeInfo VALUES(3, 'Tom', 'Ford', 'FT', 3, 35);
 INSERT OR IGNORE INTO employeeInfo VALUES(4, 'Deva', 'Reeb', 'FT', 3, 45);
 INSERT OR IGNORE INTO employeeInfo VALUES(5, 'Joe', 'Woodward', 'FT', 4, 37);
 
+-- Parking spots
 INSERT OR IGNORE INTO parkingInfo VALUES(1, NULL, 1, 1, 1);
 INSERT OR IGNORE INTO parkingInfo VALUES(2, NULL, 1, 1, 1);
 INSERT OR IGNORE INTO parkingInfo VALUES(3, NULL, 1, 1, 0);
@@ -133,49 +147,56 @@ else
     echo "   Database already exists"
 fi
 
-# Test Python availability
+# Verify environment
 echo ""
-echo "4. Checking Python installation..."
-if command -v python3 &> /dev/null; then
-    echo "   Python 3 found: $(python3 --version)"
+echo "4. Verifying school server environment..."
+echo -n "   SQLite3: "
+if command -v sqlite3 &> /dev/null; then
+    sqlite3 --version | head -n1
 else
-    echo "   ERROR: Python 3 not found!"
-    exit 1
+    echo "NOT FOUND - Please contact IT"
 fi
 
-# Create a simple test CGI script
-echo ""
-echo "5. Creating test CGI script..."
-mkdir -p cgi-bin
-cat > cgi-bin/test.py << 'EOF'
-#!/usr/bin/env python3
-print("Content-Type: text/html\n")
-print("<h1>CGI is working!</h1>")
-print("<p>Python CGI scripts are executing correctly.</p>")
-EOF
-chmod 755 cgi-bin/test.py
+echo -n "   Python3: "
+if command -v python3 &> /dev/null; then
+    python3 --version
+else
+    echo "NOT FOUND - Please contact IT"
+fi
 
-# Provide instructions
+echo -n "   Apache: "
+if [ -d "/etc/apache2" ] || [ -d "/etc/httpd" ]; then
+    echo "Available"
+else
+    echo "Configuration may vary"
+fi
+
+# Instructions
 echo ""
 echo "Setup Complete!"
 echo "==============="
 echo ""
-echo "Access your application at:"
-echo "  Main page: http://your-domain/parking-dbms/"
-echo "  CGI test: http://your-domain/parking-dbms/cgi-bin/test.py"
-echo "  Database app: http://your-domain/parking-dbms/cgi-bin/index.py"
+echo "Available Interface:"
+echo "  Static HTML Interface: http://your-domain/~username/parking-dbms/"
 echo ""
-echo "Available interfaces:"
-echo "  1. Static SQL Generator: index.html (no server-side needed)"
-echo "  2. Python CGI App: cgi-bin/index.py (full database access)"
+echo "This provides:"
+echo "  - SQL query generator for SQLite database"
+echo "  - No server-side execution needed"
+echo "  - Works within school server restrictions"
 echo ""
-echo "If CGI doesn't work, you may need to:"
-echo "  1. Contact IT to enable CGI for your account"
-echo "  2. Check if .htaccess overrides are allowed"
-echo "  3. Use the static HTML interface instead"
+echo "School Server Restrictions:"
+echo "  ✗ No sudo access"
+echo "  ✗ Port 80 only (no custom ports)"
+echo "  ✗ No CGI/PHP execution"
+echo "  ✓ Static HTML/CSS/JS files work"
+echo "  ✓ SQLite3 database created locally"
 echo ""
 echo "Files created:"
-echo "  - parking.db (SQLite database)"
-echo "  - cgi-bin/test.py (CGI test script)"
+echo "  - parking.db (SQLite database with sample data)"
 echo "  - .htaccess (Apache configuration)"
+echo ""
+echo "To use the SQL queries:"
+echo "  1. Open the web interface"
+echo "  2. Generate SQL commands"
+echo "  3. Run them using: sqlite3 parking.db"
 echo ""

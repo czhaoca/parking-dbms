@@ -121,7 +121,18 @@
 <body>
     <div class="container">
         <h1>Parking Database Management System</h1>
-        <p style="text-align: center; color: #666;">SQL Command Generator for Oracle Database</p>
+        <p style="text-align: center; color: #666;">Static SQL Command Generator for SQLite Database</p>
+        <div style="background-color: #fff3cd; border: 1px solid #ffeaa7; border-radius: 5px; padding: 15px; margin: 20px 0;">
+            <h3 style="margin-top: 0; color: #856404;">School Server Environment</h3>
+            <p style="margin: 10px 0; color: #856404;">This application has been refactored to work within school server restrictions:</p>
+            <ul style="color: #856404;">
+                <li><strong>No sudo access</strong> - All operations work with user permissions</li>
+                <li><strong>Port 80 only</strong> - No custom port configuration needed</li>
+                <li><strong>Static HTML/JS only</strong> - PHP no longer supported after course completion</li>
+                <li><strong>SQLite3 database</strong> - Migrated from Oracle to SQLite for simplicity</li>
+            </ul>
+            <p style="margin-bottom: 0; color: #856404;">This interface generates SQL commands that you can run locally with: <code>sqlite3 parking.db</code></p>
+        </div>
         
         <div class="nav-menu">
             <button class="nav-button active" onclick="showSection('overview')">Overview</button>
@@ -147,11 +158,18 @@
                 <li><strong>parkingWaitList</strong> - Waiting list for parking spots</li>
             </ul>
             
-            <h3>Connection Details:</h3>
+            <h3>Database Access:</h3>
             <div class="sql-output">
-Server: dbhost.students.cs.ubc.ca:1522/stu
-Username: ora_[your_username]
-Password: a[your_student_number]</div>
+# Local SQLite database
+Database file: parking.db
+
+# Access via command line:
+sqlite3 parking.db
+
+# Execute SQL queries:
+sqlite> SELECT * FROM employeeInfo;
+sqlite> .tables
+sqlite> .quit</div>
         </div>
         
         <!-- Employee Management Section -->
@@ -253,7 +271,7 @@ WHERE parkingNum = [PARKING_NUM];
 
 -- Add to waitlist (replace values)
 INSERT INTO parkingWaitList (waitListId, employeeId, waitFrom, parkingNum)
-VALUES ([ID], [EMP_ID], TO_CHAR(SYSDATE, 'YYYY-MM-DD'), NULL);</div>
+VALUES ([ID], [EMP_ID], date('now'), NULL);</div>
         </div>
         
         <!-- Reports Section -->
@@ -318,22 +336,29 @@ FROM evBook;</div>
             <h2>Database Setup</h2>
             <p>Copy and execute these SQL commands to set up the database:</p>
             
-            <h3>1. Create Tables</h3>
+            <h3>1. Setup Database</h3>
             <div class="sql-output">
--- Run the complete parkingdata.sql file to:
--- 1. Drop existing tables (if any)
--- 2. Create all tables with proper constraints
--- 3. Insert sample data
--- 4. Grant public access
+# Run the setup script to create SQLite database:
+./setup-school.sh
 
--- Location: src/parkingdata.sql</div>
+# This will:
+# 1. Create parking.db with all tables
+# 2. Insert sample data
+# 3. Set proper permissions
+# 4. Verify environment
+
+# Manual database creation:
+sqlite3 parking.db < src/parkingdata.sql</div>
             
             <h3>2. Verify Installation</h3>
             <div class="sql-output">
 -- Check all tables were created
-SELECT table_name FROM user_tables 
-WHERE table_name IN ('BUILDINGINFO', 'DEPARTMENTINFO', 'EMPLOYEEINFO', 
-                     'LOGININFO', 'PARKINGINFO', 'EVBOOK', 'PARKINGWAITLIST');
+.tables
+
+-- Or with SQL:
+SELECT name FROM sqlite_master 
+WHERE type='table' 
+ORDER BY name;
 
 -- Count records in each table
 SELECT 'employeeInfo' as table_name, COUNT(*) as record_count FROM employeeInfo
