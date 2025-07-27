@@ -1,0 +1,253 @@
+
+=== SYSTEM INFORMATION ===
+Hostname: gambier.students.cs.ubc.ca
+OS: Linux gambier.students.cs.ubc.ca 6.11.0-29-generic #29~24.04.1-Ubuntu SMP PREEMPT_DYNAMIC Thu Jun 26 14:16:59 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+
+=== PACKAGE MANAGERS ===
+apt: Available
+apt list --installed 2>/dev/null | head -20:
+Listing...
+7zip/noble,now 23.01+dfsg-11 amd64 [installed,automatic]
+a2ps/noble,now 1:4.15.5-2 amd64 [installed]
+accountsservice-ubuntu-schemas/noble,now 0.0.7+21.10.20210712-0ubuntu3 all [installed,automatic]
+accountsservice/noble,now 23.13.9-2ubuntu6 amd64 [installed,automatic]
+acl/noble-updates,now 2.3.2-1build1.1 amd64 [installed,automatic]
+activity-log-manager/noble,now 0.9.7-0ubuntu31 amd64 [installed]
+adduser/noble,now 3.137ubuntu1 all [installed,automatic]
+adwaita-icon-theme/noble,now 46.0-1 all [installed,automatic]
+aisleriot/noble,now 1:3.22.31-1build2 amd64 [installed,automatic]
+alpine-doc/noble,now 2.26+dfsg-1build3 all [installed,automatic]
+alpine/noble,now 2.26+dfsg-1build3 amd64 [installed]
+alsa-topology-conf/noble,now 1.2.5.1-2 all [installed,automatic]
+alsa-ucm-conf/noble-updates,now 1.2.10-1ubuntu5.7 all [installed,automatic]
+amd64-microcode/noble-updates,noble-security,now 3.20250311.1ubuntu0.24.04.1 amd64 [installed,automatic]
+apache2-bin/noble-updates,noble-security,now 2.4.58-1ubuntu8.7 amd64 [installed,automatic]
+apg/noble,now 2.2.3.dfsg.1-5build3 amd64 [installed,automatic]
+apparmor/noble-updates,now 4.0.1really4.0.1-0ubuntu0.24.04.4 amd64 [installed,automatic]
+apport-core-dump-handler/noble-updates,noble-security,now 2.28.1-0ubuntu3.8 all [installed,automatic]
+apport-symptoms/noble,now 0.25 all [installed,automatic]
+yum: Not available
+pip3: Available
+pip3 list:
+Package                 Version
+----------------------- --------------
+attrs                   23.2.0
+Automat                 22.10.0
+Babel                   2.10.3
+bcc                     0.29.1
+bcrypt                  3.2.2
+beautifulsoup4          4.12.3
+blinker                 1.7.0
+boto3                   1.34.46
+botocore                1.34.46
+Brlapi                  0.8.5
+certifi                 2023.11.17
+chardet                 5.2.0
+click                   8.1.6
+cloud-init              25.1.2
+colorama                0.4.6
+command-not-found       0.3
+configobj               5.0.8
+constantly              23.10.4
+cryptography            41.0.7
+cssselect               1.2.0
+cupshelpers             1.0
+dbus-python             1.3.2
+decorator               5.1.1
+defer                   1.0.6
+distlib                 0.3.8
+distro                  1.9.0
+distro-info             1.7+build1
+feedparser              6.0.10
+filelock                3.13.1
+gitdb                   4.0.11
+GitPython               3.1.37
+html5lib                1.1
+httplib2                0.20.4
+hyperlink               21.0.0
+idna                    3.6
+incremental             22.10.0
+Jinja2                  3.1.2
+jmespath                1.0.1
+jsonpatch               1.32
+jsonpointer             2.0
+jsonschema              4.10.3
+kazam                   1.4.5
+language-selector       0.1
+launchpadlib            1.11.0
+lazr.restfulclient      0.14.6
+lazr.uri                1.0.6
+louis                   3.29.0
+lxml                    5.2.1
+Mako                    1.3.2.dev0
+markdown-it-py          3.0.0
+MarkupSafe              2.1.5
+mdurl                   0.1.2
+netaddr                 0.8.0
+netifaces               0.11.0
+numpy                   1.26.4
+oauthlib                3.2.2
+olefile                 0.46
+packaging               24.0
+PAM                     0.4.2
+pexpect                 4.9.0
+pillow                  10.2.0
+pip                     24.0
+platformdirs            4.2.0
+plumbum                 1.8.2
+ptyprocess              0.7.0
+pyasn1                  0.4.8
+pyasn1-modules          0.2.8
+pycairo                 1.25.1
+pycups                  2.0.1
+pycurl                  7.45.3
+Pygments                2.17.2
+PyGObject               3.48.2
+PyHamcrest              2.1.0
+PyJWT                   2.7.0
+pyOpenSSL               23.2.0
+pyparsing               3.1.1
+pyrsistent              0.20.0
+pyserial                3.5
+python-apt              2.7.7+ubuntu4
+python-dateutil         2.8.2
+python-debian           0.1.49+ubuntu2
+python-dotenv           1.0.1
+python-magic            0.4.27
+pytz                    2024.1
+pyxdg                   0.28
+PyYAML                  6.0.1
+requests                2.31.0
+rich                    13.7.1
+s3transfer              0.10.1
+SciPy                   1.11.4
+screen-resolution-extra 0.0.0
+service-identity        24.1.0
+setuptools              68.1.2
+sgmllib3k               1.0.0
+six                     1.16.0
+smmap                   6.0.0
+sos                     4.8.2
+soupsieve               2.5
+ssh-import-id           5.11
+systemd-python          235
+Twisted                 24.3.0
+ubuntu-drivers-common   0.0.0
+ubuntu-pro-client       8001
+ufw                     0.36.2
+unattended-upgrades     0.1
+urllib3                 2.0.7
+virtualenv              20.25.0+ds
+wadllib                 1.3.6
+webencodings            0.5.1
+wheel                   0.42.0
+xdg                     5
+xkit                    0.0.0
+zope.interface          6.1
+
+=== WEB SERVER ===
+Apache2 configuration found
+Apache modules available:
+/etc/apache2/mods-available/dnssd.load
+
+User public_html status:
+~/public_html exists
+total 264
+drwxr-xr-x  4 czha undergrad 138 Jul 26 20:45 .
+drwx--x--x 18 czha undergrad 918 Jul 26 15:44 ..
+drwxr-xr-x  2 czha undergrad  26 Jul 26 15:16 cgi-bin
+-rwxr-xr-x  1 czha undergrad 655 Jul 26 14:31 index.html
+
+=== HTACCESS CAPABILITIES ===
+.htaccess file creation: Success
+
+=== PROGRAMMING LANGUAGES ===
+Python3: Python 3.12.3
+Python3 path: /bin/python3
+Python3 modules:
+PHP: Not found
+Perl: This is perl 5, version 38, subversion 2 (v5.38.2) built for x86_64-linux-gnu-thread-multi
+Ruby: ruby 3.2.3 (2024-01-18 revision 52bb2ac0a6) [x86_64-linux-gnu]
+Node.js: v18.19.1
+
+=== DATABASE TOOLS ===
+SQLite3: 3.45.1 2024-01-30 16:01:20 e876e51a0ed5c5b3126f52e532044363a014bc594cfefa87ffb5b82257ccalt1 (64-bit)
+MySQL client: Not found
+PostgreSQL client: Not found
+
+=== CGI CAPABILITY TEST ===
+Created test CGI scripts in cgi-test/
+Try accessing: http://your-domain/~username/parking-dbms/cgi-test/test.py
+
+=== FILE PERMISSIONS ===
+Current directory permissions:
+total 640
+drwx------ 7 czha undergrad   481 Jul 26 20:46 .
+drwxr-xr-x 4 czha undergrad   138 Jul 26 20:45 ..
+-rwx------ 1 czha undergrad  7470 Jul 26 20:45 analyze-school-server.sh
+-rwx------ 1 czha undergrad  6649 Jul 26 20:45 app.py
+drwx------ 4 czha undergrad    65 Jul 26 20:45 archive
+drwx------ 2 czha undergrad    50 Jul 26 20:46 cgi-test
+-rw------- 1 czha undergrad  2245 Jul 26 20:45 CLAUDE.md
+drwx------ 8 czha undergrad   267 Jul 26 20:45 .git
+-rw------- 1 czha undergrad   495 Jul 26 20:45 .gitignore
+
+=== PROCESS LIMITS ===
+real-time non-blocking time  (microseconds, -R) unlimited
+core file size              (blocks, -c) 0
+data seg size               (kbytes, -d) unlimited
+scheduling priority                 (-e) 0
+file size                   (blocks, -f) unlimited
+pending signals                     (-i) 767328
+max locked memory           (kbytes, -l) 24577952
+max memory size             (kbytes, -m) unlimited
+open files                          (-n) 1024
+pipe size                (512 bytes, -p) 8
+POSIX message queues         (bytes, -q) 819200
+real-time priority                  (-r) 0
+stack size                  (kbytes, -s) 8192
+cpu time                   (seconds, -t) unlimited
+max user processes                  (-u) 767328
+virtual memory              (kbytes, -v) 10240000
+file locks                          (-x) unlimited
+
+=== NETWORK ACCESS ===
+Can bind to ports:
+Port 8080: Can bind
+Port 8000: Can bind
+Port 3000: Can bind
+Port 5000: Can bind
+
+=== ADVANCED WEB FEATURES ===
+websocket: Not available
+tornado: Not available
+asyncio: Available
+aiohttp: Not available
+wsgiref: Available
+
+=== SQLITE WEB INTERFACE OPTIONS ===
+Python http.server: Available
+
+=== CLIENT-SIDE POSSIBILITIES ===
+Can use JavaScript with:
+- IndexedDB for client-side storage
+- WebSQL (deprecated but might work)
+- LocalStorage for simple data
+- Service Workers for offline functionality
+- Fetch API for AJAX-like requests
+
+=== ALTERNATIVE APPROACHES ===
+1. Pure client-side with sql.js (SQLite in browser)
+2. Static site generator with pre-built pages
+3. GitHub Pages with GitHub Actions for data updates
+4. Netlify/Vercel with serverless functions
+5. Client-side frameworks (Vue, React) with IndexedDB
+
+=== SUMMARY ===
+Analysis complete. Check school-server-analysis.txt for full details.
+
+Next steps:
+1. Test CGI scripts if Apache allows
+2. Explore client-side database solutions
+3. Consider static generation approach
+4. Test Python simple HTTP server on high ports

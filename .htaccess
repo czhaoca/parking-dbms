@@ -1,27 +1,27 @@
-# Apache configuration for static HTML application
+# Apache Configuration for Parking Database Management System
 
-# Set default index files
-DirectoryIndex index.html app.html
+# Enable CGI execution
+Options +ExecCGI
 
-# Disable directory browsing
-Options -Indexes
+# Set up CGI handlers
+AddHandler cgi-script .py .cgi
 
-# Basic MIME types
+# Directory settings
+Options +Indexes +FollowSymLinks
+DirectoryIndex interactive.html index.html
+
+# MIME types
 AddType text/html .html
 AddType text/css .css
 AddType application/javascript .js
 AddType application/json .json
 
-# Protect sensitive files
-<FilesMatch "\.(db|sql|sh|py|md|bak)$">
+# Protect database file
+<Files "parking.db">
     Order allow,deny
     Deny from all
-</FilesMatch>
+</Files>
 
-# Cache static assets
-<IfModule mod_expires.c>
-    ExpiresActive On
-    ExpiresByType text/html "access plus 0 seconds"
-    ExpiresByType text/css "access plus 1 week"
-    ExpiresByType application/javascript "access plus 1 week"
-</IfModule>
+# Error handling
+ErrorDocument 404 /~czha/parking-dbms/index.html
+ErrorDocument 500 /~czha/parking-dbms/index.html

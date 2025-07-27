@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parking Database Management System - Interactive</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #2196F3, #1976D2);
+            color: white;
+            padding: 30px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        h1 {
+            text-align: center;
+            font-size: 2.5em;
+            font-weight: 300;
+        }
+        
+        .subtitle {
+            text-align: center;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+        
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .nav-tab:hover {
+            background: #f0f0f0;
+        }
+        
+        .nav-tab.active {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .content-section {
+            display: none;
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        
+        .content-section.active {
+            display: block;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #4CAF50, #45a049);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+        
+        .stat-card h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+        
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        label {
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #666;
+        }
+        
+        input, select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        input:focus, select:focus {
+            outline: none;
+            border-color: #2196F3;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: #2196F3;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #1976D2;
+        }
+        
+        .btn-success {
+            background: #4CAF50;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #45a049;
+        }
+        
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background: #d32f2f;
+        }
+        
+        .btn-warning {
+            background: #ff9800;
+            color: white;
+        }
+        
+        .btn-warning:hover {
+            background: #e68900;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        th {
+            background: #f5f5f5;
+            font-weight: 600;
+            color: #666;
+        }
+        
+        tr:hover {
+            background: #f9f9f9;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .action-buttons button {
+            padding: 5px 10px;
+            font-size: 14px;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+        
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .alert.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .alert.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+        
+        .loading.active {
+            display: block;
+        }
+        
+        .search-box {
+            margin-bottom: 20px;
+        }
+        
+        .search-box input {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>Parking Database Management System</h1>
+            <p class="subtitle">Interactive CRUD Interface with Real-time Updates</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('dashboard')">Dashboard</button>
+            <button class="nav-tab" onclick="showTab('employees')">Employees</button>
+            <button class="nav-tab" onclick="showTab('parking')">Parking Spots</button>
+            <button class="nav-tab" onclick="showTab('waitlist')">Waitlist</button>
+            <button class="nav-tab" onclick="showTab('reports')">Reports</button>
+        </div>
+        
+        <div id="alert" class="alert"></div>
+        
+        <!-- Dashboard Section -->
+        <div id="dashboard" class="content-section active">
+            <h2>System Overview</h2>
+            <div class="stats-grid" id="statsGrid">
+                <div class="stat-card">
+                    <h3 id="totalEmployees">-</h3>
+                    <p>Total Employees</p>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #2196F3, #1976D2);">
+                    <h3 id="totalSpots">-</h3>
+                    <p>Total Parking Spots</p>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #ff9800, #f57c00);">
+                    <h3 id="occupiedSpots">-</h3>
+                    <p>Occupied Spots</p>
+                </div>
+                <div class="stat-card" style="background: linear-gradient(135deg, #f44336, #d32f2f);">
+                    <h3 id="waitlistCount">-</h3>
+                    <p>On Waitlist</p>
+                </div>
+            </div>
+            
+            <h3>Quick Actions</h3>
+            <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <button class="btn-primary" onclick="showTab('employees'); showAddEmployeeModal();">Add New Employee</button>
+                <button class="btn-success" onclick="showTab('parking');">Manage Parking</button>
+                <button class="btn-warning" onclick="showTab('waitlist');">View Waitlist</button>
+            </div>
+        </div>
+        
+        <!-- Employees Section -->
+        <div id="employees" class="content-section">
+            <h2>Employee Management</h2>
+            
+            <div class="search-box">
+                <input type="text" id="employeeSearch" placeholder="Search employees by name..." onkeyup="filterEmployees()">
+            </div>
+            
+            <button class="btn-primary" onclick="showAddEmployeeModal()">Add New Employee</button>
+            
+            <div class="loading" id="employeesLoading">Loading employees...</div>
+            <table id="employeesTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Status</th>
+                        <th>Department</th>
+                        <th>Age</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="employeesTableBody"></tbody>
+            </table>
+        </div>
+        
+        <!-- Parking Section -->
+        <div id="parking" class="content-section">
+            <h2>Parking Spot Management</h2>
+            
+            <div style="margin-bottom: 20px;">
+                <label>
+                    <input type="checkbox" id="showAvailableOnly" onchange="loadParkingSpots()">
+                    Show available spots only
+                </label>
+            </div>
+            
+            <div class="loading" id="parkingLoading">Loading parking spots...</div>
+            <table id="parkingTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Spot #</th>
+                        <th>Assigned To</th>
+                        <th>EV Charging</th>
+                        <th>Fast Charge</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="parkingTableBody"></tbody>
+            </table>
+        </div>
+        
+        <!-- Waitlist Section -->
+        <div id="waitlist" class="content-section">
+            <h2>Parking Waitlist</h2>
+            
+            <button class="btn-primary" onclick="showAddToWaitlistModal()">Add to Waitlist</button>
+            
+            <div class="loading" id="waitlistLoading">Loading waitlist...</div>
+            <table id="waitlistTable" style="display: none;">
+                <thead>
+                    <tr>
+                        <th>Position</th>
+                        <th>Employee</th>
+                        <th>Waiting Since</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="waitlistTableBody"></tbody>
+            </table>
+        </div>
+        
+        <!-- Reports Section -->
+        <div id="reports" class="content-section">
+            <h2>Reports & Analytics</h2>
+            
+            <div id="reportsContent">
+                <h3>Employee Distribution</h3>
+                <div id="employeeDistribution"></div>
+                
+                <h3>Parking Utilization</h3>
+                <div id="parkingUtilization"></div>
+                
+                <h3>Department Summary</h3>
+                <div id="departmentSummary"></div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modals -->
+    <div id="employeeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="employeeModalTitle">Add New Employee</h3>
+                <button class="close-btn" onclick="closeModal('employeeModal')">&times;</button>
+            </div>
+            <form id="employeeForm" onsubmit="saveEmployee(event)">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Employee ID</label>
+                        <input type="number" id="empId" required>
+                    </div>
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" id="empFirstName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" id="empLastName" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Status</label>
+                        <select id="empStatus" required>
+                            <option value="FT">Full Time</option>
+                            <option value="PT">Part Time</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Department</label>
+                        <select id="empDepartment" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label>Age</label>
+                        <input type="number" id="empAge" min="18" max="100" required>
+                    </div>
+                </div>
+                <div style="margin-top: 20px; text-align: right;">
+                    <button type="button" class="btn-danger" onclick="closeModal('employeeModal')">Cancel</button>
+                    <button type="submit" class="btn-success">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="assignParkingModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Assign Parking Spot</h3>
+                <button class="close-btn" onclick="closeModal('assignParkingModal')">&times;</button>
+            </div>
+            <form onsubmit="assignParking(event)">
+                <input type="hidden" id="assignParkingNum">
+                <div class="form-group">
+                    <label>Select Employee</label>
+                    <select id="assignEmployeeId" required></select>
+                </div>
+                <div style="margin-top: 20px; text-align: right;">
+                    <button type="button" class="btn-danger" onclick="closeModal('assignParkingModal')">Cancel</button>
+                    <button type="submit" class="btn-success">Assign</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <div id="waitlistModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add to Waitlist</h3>
+                <button class="close-btn" onclick="closeModal('waitlistModal')">&times;</button>
+            </div>
+            <form onsubmit="addToWaitlist(event)">
+                <div class="form-group">
+                    <label>Select Employee</label>
+                    <select id="waitlistEmployeeId" required></select>
+                </div>
+                <div style="margin-top: 20px; text-align: right;">
+                    <button type="button" class="btn-danger" onclick="closeModal('waitlistModal')">Cancel</button>
+                    <button type="submit" class="btn-success">Add to Waitlist</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // API Configuration
+        const API_BASE = 'cgi-bin/parking-api.py';
+        
+        // Global data
+        let employees = [];
+        let departments = [];
+        let parkingSpots = [];
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            loadDashboard();
+            loadDepartments();
+        });
+        
+        // Tab Navigation
+        function showTab(tabName) {
+            // Hide all sections
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.classList.remove('active');
+            });
+            
+            // Remove active from all tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected section
+            document.getElementById(tabName).classList.add('active');
+            
+            // Mark tab as active
+            event.target.classList.add('active');
+            
+            // Load data for the section
+            switch(tabName) {
+                case 'dashboard':
+                    loadDashboard();
+                    break;
+                case 'employees':
+                    loadEmployees();
+                    break;
+                case 'parking':
+                    loadParkingSpots();
+                    break;
+                case 'waitlist':
+                    loadWaitlist();
+                    break;
+                case 'reports':
+                    loadReports();
+                    break;
+            }
+        }
+        
+        // Dashboard Functions
+        async function loadDashboard() {
+            try {
+                const response = await fetch(`${API_BASE}?table=stats`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    const stats = result.data;
+                    document.getElementById('totalEmployees').textContent = 
+                        (stats.employeesByStatus.FT || 0) + (stats.employeesByStatus.PT || 0);
+                    document.getElementById('totalSpots').textContent = stats.totalParkingSpots;
+                    document.getElementById('occupiedSpots').textContent = stats.occupiedSpots;
+                    document.getElementById('waitlistCount').textContent = stats.waitlistCount;
+                }
+            } catch (error) {
+                showAlert('Failed to load dashboard statistics', 'error');
+            }
+        }
+        
+        // Employee Functions
+        async function loadEmployees() {
+            document.getElementById('employeesLoading').classList.add('active');
+            document.getElementById('employeesTable').style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_BASE}?table=employees`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    employees = result.data;
+                    displayEmployees(employees);
+                }
+            } catch (error) {
+                showAlert('Failed to load employees', 'error');
+            } finally {
+                document.getElementById('employeesLoading').classList.remove('active');
+            }
+        }
+        
+        function displayEmployees(employeeList) {
+            const tbody = document.getElementById('employeesTableBody');
+            tbody.innerHTML = '';
+            
+            employeeList.forEach(emp => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${emp.employeeId}</td>
+                    <td>${emp.firstName} ${emp.lastName}</td>
+                    <td>${emp.employeeStatus === 'FT' ? 'Full Time' : 'Part Time'}</td>
+                    <td>${emp.departmentName || 'N/A'}</td>
+                    <td>${emp.age}</td>
+                    <td class="action-buttons">
+                        <button class="btn-primary" onclick="editEmployee(${emp.employeeId})">Edit</button>
+                        <button class="btn-danger" onclick="deleteEmployee(${emp.employeeId})">Delete</button>
+                    </td>
+                `;
+            });
+            
+            document.getElementById('employeesTable').style.display = 'table';
+        }
+        
+        function filterEmployees() {
+            const searchTerm = document.getElementById('employeeSearch').value.toLowerCase();
+            const filtered = employees.filter(emp => 
+                emp.firstName.toLowerCase().includes(searchTerm) || 
+                emp.lastName.toLowerCase().includes(searchTerm)
+            );
+            displayEmployees(filtered);
+        }
+        
+        async function loadDepartments() {
+            try {
+                const response = await fetch(`${API_BASE}?table=departments`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    departments = result.data;
+                    
+                    // Populate department dropdowns
+                    const select = document.getElementById('empDepartment');
+                    select.innerHTML = '';
+                    departments.forEach(dept => {
+                        const option = document.createElement('option');
+                        option.value = dept.departmentId;
+                        option.textContent = dept.departmentName;
+                        select.appendChild(option);
+                    });
+                }
+            } catch (error) {
+                console.error('Failed to load departments:', error);
+            }
+        }
+        
+        function showAddEmployeeModal() {
+            document.getElementById('employeeModalTitle').textContent = 'Add New Employee';
+            document.getElementById('employeeForm').reset();
+            document.getElementById('empId').readOnly = false;
+            showModal('employeeModal');
+        }
+        
+        async function editEmployee(id) {
+            const employee = employees.find(emp => emp.employeeId === id);
+            if (!employee) return;
+            
+            document.getElementById('employeeModalTitle').textContent = 'Edit Employee';
+            document.getElementById('empId').value = employee.employeeId;
+            document.getElementById('empId').readOnly = true;
+            document.getElementById('empFirstName').value = employee.firstName;
+            document.getElementById('empLastName').value = employee.lastName;
+            document.getElementById('empStatus').value = employee.employeeStatus;
+            document.getElementById('empDepartment').value = employee.departmentId;
+            document.getElementById('empAge').value = employee.age;
+            
+            showModal('employeeModal');
+        }
+        
+        async function saveEmployee(event) {
+            event.preventDefault();
+            
+            const employeeData = {
+                employeeId: parseInt(document.getElementById('empId').value),
+                firstName: document.getElementById('empFirstName').value,
+                lastName: document.getElementById('empLastName').value,
+                employeeStatus: document.getElementById('empStatus').value,
+                departmentId: parseInt(document.getElementById('empDepartment').value),
+                age: parseInt(document.getElementById('empAge').value)
+            };
+            
+            const isEdit = document.getElementById('empId').readOnly;
+            
+            try {
+                const response = await fetch(`${API_BASE}?table=employees${isEdit ? '&id=' + employeeData.employeeId : ''}`, {
+                    method: isEdit ? 'PUT' : 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(employeeData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert(`Employee ${isEdit ? 'updated' : 'added'} successfully!`, 'success');
+                    closeModal('employeeModal');
+                    loadEmployees();
+                    loadDashboard();
+                } else {
+                    showAlert(result.error || 'Operation failed', 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to save employee', 'error');
+            }
+        }
+        
+        async function deleteEmployee(id) {
+            if (!confirm('Are you sure you want to delete this employee?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}?table=employees&id=${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('Employee deleted successfully!', 'success');
+                    loadEmployees();
+                    loadDashboard();
+                } else {
+                    showAlert(result.error || 'Delete failed', 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to delete employee', 'error');
+            }
+        }
+        
+        // Parking Functions
+        async function loadParkingSpots() {
+            document.getElementById('parkingLoading').classList.add('active');
+            document.getElementById('parkingTable').style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_BASE}?table=parking`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    parkingSpots = result.data;
+                    displayParkingSpots();
+                }
+            } catch (error) {
+                showAlert('Failed to load parking spots', 'error');
+            } finally {
+                document.getElementById('parkingLoading').classList.remove('active');
+            }
+        }
+        
+        function displayParkingSpots() {
+            const tbody = document.getElementById('parkingTableBody');
+            const showAvailableOnly = document.getElementById('showAvailableOnly').checked;
+            tbody.innerHTML = '';
+            
+            const spotsToShow = showAvailableOnly 
+                ? parkingSpots.filter(spot => !spot.employeeId)
+                : parkingSpots;
+            
+            spotsToShow.forEach(spot => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>${spot.parkingNum}</td>
+                    <td>${spot.employeeId ? `${spot.firstName} ${spot.lastName}` : '<em>Available</em>'}</td>
+                    <td>${spot.evCharge ? 'Yes' : 'No'}</td>
+                    <td>${spot.fastCharge ? 'Yes' : 'No'}</td>
+                    <td class="action-buttons">
+                        ${spot.employeeId 
+                            ? `<button class="btn-warning" onclick="releaseParking(${spot.parkingNum})">Release</button>`
+                            : `<button class="btn-success" onclick="showAssignModal(${spot.parkingNum})">Assign</button>`
+                        }
+                    </td>
+                `;
+            });
+            
+            document.getElementById('parkingTable').style.display = 'table';
+        }
+        
+        async function showAssignModal(parkingNum) {
+            document.getElementById('assignParkingNum').value = parkingNum;
+            
+            // Load employees without parking
+            const response = await fetch(`${API_BASE}?table=employees`);
+            const result = await response.json();
+            
+            if (result.success) {
+                const availableEmployees = result.data.filter(emp => 
+                    !parkingSpots.some(spot => spot.employeeId === emp.employeeId)
+                );
+                
+                const select = document.getElementById('assignEmployeeId');
+                select.innerHTML = '';
+                availableEmployees.forEach(emp => {
+                    const option = document.createElement('option');
+                    option.value = emp.employeeId;
+                    option.textContent = `${emp.firstName} ${emp.lastName}`;
+                    select.appendChild(option);
+                });
+                
+                showModal('assignParkingModal');
+            }
+        }
+        
+        async function assignParking(event) {
+            event.preventDefault();
+            
+            const parkingNum = document.getElementById('assignParkingNum').value;
+            const employeeId = document.getElementById('assignEmployeeId').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}?table=parking&id=${parkingNum}&assign=1`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ employeeId: parseInt(employeeId) })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('Parking spot assigned successfully!', 'success');
+                    closeModal('assignParkingModal');
+                    loadParkingSpots();
+                    loadDashboard();
+                } else {
+                    showAlert(result.error || 'Assignment failed', 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to assign parking spot', 'error');
+            }
+        }
+        
+        async function releaseParking(parkingNum) {
+            if (!confirm('Are you sure you want to release this parking spot?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}?table=parking&id=${parkingNum}&release=1`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({})
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('Parking spot released successfully!', 'success');
+                    loadParkingSpots();
+                    loadDashboard();
+                } else {
+                    showAlert(result.error || 'Release failed', 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to release parking spot', 'error');
+            }
+        }
+        
+        // Waitlist Functions
+        async function loadWaitlist() {
+            document.getElementById('waitlistLoading').classList.add('active');
+            document.getElementById('waitlistTable').style.display = 'none';
+            
+            try {
+                const response = await fetch(`${API_BASE}?table=waitlist`);
+                const result = await response.json();
+                
+                if (result.success) {
+                    displayWaitlist(result.data);
+                }
+            } catch (error) {
+                showAlert('Failed to load waitlist', 'error');
+            } finally {
+                document.getElementById('waitlistLoading').classList.remove('active');
+            }
+        }
+        
+        function displayWaitlist(waitlist) {
+            const tbody = document.getElementById('waitlistTableBody');
+            tbody.innerHTML = '';
+            
+            waitlist.forEach((entry, index) => {
+                const row = tbody.insertRow();
+                row.innerHTML = `
+                    <td>#${index + 1}</td>
+                    <td>${entry.firstName} ${entry.lastName}</td>
+                    <td>${new Date(entry.waitFrom).toLocaleDateString()}</td>
+                    <td class="action-buttons">
+                        <button class="btn-danger" onclick="removeFromWaitlist(${entry.waitListId})">Remove</button>
+                    </td>
+                `;
+            });
+            
+            document.getElementById('waitlistTable').style.display = 'table';
+        }
+        
+        async function showAddToWaitlistModal() {
+            // Load employees not on waitlist and without parking
+            const response = await fetch(`${API_BASE}?table=employees`);
+            const result = await response.json();
+            
+            if (result.success) {
+                const waitlistResponse = await fetch(`${API_BASE}?table=waitlist`);
+                const waitlistResult = await waitlistResponse.json();
+                const waitlistEmployeeIds = waitlistResult.data.map(w => w.employeeId);
+                
+                const eligibleEmployees = result.data.filter(emp => 
+                    !parkingSpots.some(spot => spot.employeeId === emp.employeeId) &&
+                    !waitlistEmployeeIds.includes(emp.employeeId)
+                );
+                
+                const select = document.getElementById('waitlistEmployeeId');
+                select.innerHTML = '';
+                eligibleEmployees.forEach(emp => {
+                    const option = document.createElement('option');
+                    option.value = emp.employeeId;
+                    option.textContent = `${emp.firstName} ${emp.lastName}`;
+                    select.appendChild(option);
+                });
+                
+                showModal('waitlistModal');
+            }
+        }
+        
+        async function addToWaitlist(event) {
+            event.preventDefault();
+            
+            const employeeId = document.getElementById('waitlistEmployeeId').value;
+            
+            try {
+                const response = await fetch(`${API_BASE}?table=waitlist`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        waitListId: Date.now(), // Simple ID generation
+                        employeeId: parseInt(employeeId)
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('Employee added to waitlist!', 'success');
+                    closeModal('waitlistModal');
+                    loadWaitlist();
+                    loadDashboard();
+                } else {
+                    showAlert(result.error || 'Failed to add to waitlist', 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to add to waitlist', 'error');
+            }
+        }
+        
+        async function removeFromWaitlist(id) {
+            if (!confirm('Remove from waitlist?')) return;
+            
+            try {
+                const response = await fetch(`${API_BASE}?table=waitlist&id=${id}`, {
+                    method: 'DELETE'
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    showAlert('Removed from waitlist!', 'success');
+                    loadWaitlist();
+                    loadDashboard();
+                } else {
+                    showAlert(result.error || 'Remove failed', 'error');
+                }
+            } catch (error) {
+                showAlert('Failed to remove from waitlist', 'error');
+            }
+        }
+        
+        // Reports Functions
+        async function loadReports() {
+            try {
+                const [statsResponse, deptResponse] = await Promise.all([
+                    fetch(`${API_BASE}?table=stats`),
+                    fetch(`${API_BASE}?table=departments`)
+                ]);
+                
+                const statsResult = await statsResponse.json();
+                const deptResult = await deptResponse.json();
+                
+                if (statsResult.success) {
+                    const stats = statsResult.data;
+                    
+                    // Employee Distribution
+                    document.getElementById('employeeDistribution').innerHTML = `
+                        <table>
+                            <tr>
+                                <th>Status</th>
+                                <th>Count</th>
+                                <th>Percentage</th>
+                            </tr>
+                            <tr>
+                                <td>Full Time</td>
+                                <td>${stats.employeesByStatus.FT || 0}</td>
+                                <td>${calculatePercentage(stats.employeesByStatus.FT, stats.employeesByStatus)}%</td>
+                            </tr>
+                            <tr>
+                                <td>Part Time</td>
+                                <td>${stats.employeesByStatus.PT || 0}</td>
+                                <td>${calculatePercentage(stats.employeesByStatus.PT, stats.employeesByStatus)}%</td>
+                            </tr>
+                        </table>
+                    `;
+                    
+                    // Parking Utilization
+                    const utilization = (stats.occupiedSpots / stats.totalParkingSpots * 100).toFixed(1);
+                    document.getElementById('parkingUtilization').innerHTML = `
+                        <div style="background: #f0f0f0; border-radius: 10px; overflow: hidden; margin: 20px 0;">
+                            <div style="background: #4CAF50; width: ${utilization}%; padding: 20px; color: white; text-align: center;">
+                                ${utilization}% Occupied
+                            </div>
+                        </div>
+                        <p>${stats.occupiedSpots} of ${stats.totalParkingSpots} spots occupied</p>
+                        <p>${stats.totalParkingSpots - stats.occupiedSpots} spots available</p>
+                    `;
+                }
+                
+                if (deptResult.success) {
+                    // Department Summary
+                    let deptHtml = '<table><tr><th>Department</th><th>Building</th></tr>';
+                    deptResult.data.forEach(dept => {
+                        deptHtml += `<tr><td>${dept.departmentName}</td><td>${dept.buildingName}</td></tr>`;
+                    });
+                    deptHtml += '</table>';
+                    document.getElementById('departmentSummary').innerHTML = deptHtml;
+                }
+            } catch (error) {
+                showAlert('Failed to load reports', 'error');
+            }
+        }
+        
+        function calculatePercentage(value, totals) {
+            const total = Object.values(totals).reduce((sum, val) => sum + (val || 0), 0);
+            return total > 0 ? ((value || 0) / total * 100).toFixed(1) : 0;
+        }
+        
+        // Modal Functions
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+        
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+        
+        // Alert Functions
+        function showAlert(message, type = 'success') {
+            const alert = document.getElementById('alert');
+            alert.textContent = message;
+            alert.className = `alert ${type}`;
+            alert.style.display = 'block';
+            
+            setTimeout(() => {
+                alert.style.display = 'none';
+            }, 5000);
+        }
+        
+        // Close modals when clicking outside
+        window.onclick = function(event) {
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove('active');
+            }
+        }
+    </script>
+</body>
+</html>
