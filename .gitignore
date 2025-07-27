@@ -52,3 +52,9 @@ cache/
 # OS files
 Thumbs.db
 desktop.ini
+
+# Server analysis files (contain sensitive info)
+school-server-analysis.txt
+*-server-analysis.txt
+server-analysis/
+analysis-results/
